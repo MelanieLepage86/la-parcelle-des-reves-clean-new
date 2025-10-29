@@ -1,0 +1,12 @@
+<h2>Nouveau message de contact</h2>
+
+<p><strong>Nom :</strong> <%= @contact_message.firstname %> <%= @contact_message.name %></p>
+<p><strong>Email :</strong> <%= @contact_message.email %></p>
+
+<hr>
+
+<p><strong>Message :</strong></p>
+<p style="white-space: pre-line;"><%= @contact_message.message %></p>
+
+<hr>
+<p style="font-size: 0.9em; color: #999;">Ce message a été envoyé via le formulaire de contact de votre site.</p>

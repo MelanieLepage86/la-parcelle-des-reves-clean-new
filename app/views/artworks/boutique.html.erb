@@ -1,0 +1,29 @@
+<div class="container py-4">
+  <div class="row text-center mb-4">
+    <div class="col">
+      <h2 class="fw-light">Boutique</h2>
+    </div>
+  </div>
+  <div class="row text-center">
+    <div class="col-md-4 mb-4">
+      <%= link_to artworks_category_sub_category_path('boutique', 'cyanotypie'), class: "text-decoration-none text-dark" do %>
+        <h5>Cyanotypie</h5><br>
+        <%= image_tag("Boutique-Cyano.jpg", class: "d-block mx-auto img-fluid object-fit-cover rounded-4 link-tile", style: "height: 500px; width: 100%; object-fit: cover;") %>
+      <% end %>
+    </div>
+
+    <div class="col-md-4 mb-4">
+      <%= link_to artworks_category_sub_category_path('boutique', 'peinture'), class: "text-decoration-none text-dark" do %>
+        <h5>Peinture</h5><br>
+        <%= image_tag("Boutique-Peinture.jpg", class: "d-block mx-auto img-fluid object-fit-cover rounded-4 link-tile", style: "height: 500px; width: 100%; object-fit: cover;") %>
+      <% end %>
+    </div>
+
+    <div class="col-md-4 mb-4">
+       <%= link_to artworks_category_sub_category_path('boutique', 'Curiosités'), class: "text-decoration-none text-dark" do %>
+        <h5>Curiosités</h5><br>
+        <%= image_tag("Boutique-Curiosités.jpg", class: "d-block mx-auto img-fluid object-fit-cover rounded-4 link-tile", style: "height: 500px; width: 100%; object-fit: cover;") %>
+      <% end %>
+    </div>
+  </div>
+</div>

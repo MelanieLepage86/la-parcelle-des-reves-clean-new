@@ -1,0 +1,16 @@
+<h1><%= @sub_category.titleize %> – <%= @category.titleize %></h1>
+
+<% if @artworks.any? %>
+  <% @artworks.each do |artwork| %>
+    <div class="mb-4">
+      <h2><%= link_to artwork.title, artwork_path(artwork) %></h2>
+      <% if artwork.images.attached? %>
+        <%= image_tag artwork.images, class: "img-fluid", style: "max-width: 300px;" %>
+      <% end %>
+      <p><%= artwork.description %></p>
+      <p><strong>Prix :</strong> <%= number_to_currency(artwork.price, unit: "€") %></p>
+    </div>
+  <% end %>
+<% else %>
+  <p>Aucune œuvre trouvée dans cette catégorie.</p>
+<% end %>

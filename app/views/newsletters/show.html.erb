@@ -1,0 +1,10 @@
+<p style="color: green"><%= notice %></p>
+
+<%= render @newsletter %>
+
+<div>
+  <%= link_to "Edit this newsletter", edit_newsletter_path(@newsletter) %> |
+  <%= link_to "Back to newsletters", newsletters_path %>
+
+  <%= button_to "Destroy this newsletter", @newsletter, method: :delete %>
+</div>

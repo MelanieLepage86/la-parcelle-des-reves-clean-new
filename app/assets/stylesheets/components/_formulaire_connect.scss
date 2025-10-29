@@ -1,0 +1,17 @@
+.card {
+  border-radius: 16px;
+  background-color: #fff;
+}
+
+.form-label {
+  font-weight: 600;
+}
+
+.btn-primary {
+  background-color: #5a3e36;
+  border: none;
+
+  &:hover {
+    background-color: #7b554b;
+  }
+}

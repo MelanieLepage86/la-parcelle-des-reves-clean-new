@@ -1,0 +1,55 @@
+<%= form_with model: [:admin, news_item], local: true, html: { multipart: true } do |f| %>
+  <div class="mb-3">
+    <%= f.label :category, "Catégorie" %>
+    <%= f.select :category, [
+        ["Événement à venir", "upcoming_event"],
+        ["Événement passé", "past_event"],
+        ["Presse", "press"]
+      ], {}, class: "form-select" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :title, "Titre" %>
+    <%= f.text_field :title, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :date %>
+    <%= f.date_field :date, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :location, "Lieu" %>
+    <%= f.text_field :location, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :description %>
+    <%= f.text_area :description, rows: 4, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :source, "Source (pour la presse)" %>
+    <%= f.text_field :source, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :link, "Lien (pour la presse)" %>
+    <%= f.url_field :link, class: "form-control" %>
+  </div>
+
+  <div class="mb-3">
+    <%= f.label :photos %>
+    <%= f.file_field :photos, multiple: true, class: "form-control" %>
+
+    <% if news_item.photos.attached? %>
+      <div class="mt-2 d-flex flex-wrap gap-2">
+        <% news_item.photos.each do |photo| %>
+          <%= image_tag photo.variant(resize_to_fill: [150, 100]), class: "rounded shadow-sm" %>
+        <% end %>
+      </div>
+    <% end %>
+  </div>
+
+  <%= f.submit "Enregistrer", class: "btn btn-custom" %>
+<% end %>

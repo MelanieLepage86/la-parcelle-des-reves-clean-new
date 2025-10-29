@@ -1,0 +1,24 @@
+<div class="card card-artwork position-relative">
+  <%= link_to artwork_path(artwork), class: "text-decoration-none text-dark" do %>
+    <% if artwork.images.attached? %>
+      <% primary_image = artwork.images.first %>
+      <% secondary_image = artwork.images.second if artwork.images.size > 1 %>
+
+      <div class="image-hover-wrapper position-relative <%= 'has-hover' if secondary_image %>">
+        <% if artwork.sold_and_paid? %>
+          <div class="sold-ribbon">VENDU</div>
+        <% end %>
+
+        <%= image_tag url_for(primary_image), class: "primary-img", alt: artwork.title %>
+        <% if secondary_image %>
+          <%= image_tag url_for(secondary_image), class: "secondary-img", alt: "#{artwork.title} - aperçu" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="card-body text-center p-2">
+      <h5 class="card-title mb-1"><%= artwork.title %></h5>
+      <p class="card-text fw-bold mb-2"><%= number_to_currency(artwork.price, unit: "€", separator: ",", delimiter: " ") %></p>
+    </div>
+  <% end %>
+</div>

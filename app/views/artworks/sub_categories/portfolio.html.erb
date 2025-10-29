@@ -1,0 +1,13 @@
+<div class="p-5">
+  <h1 class="mb-4 text-center">Portfolio – <%= @sub_category.titleize %></h1>
+
+  <div class="masonry-gallery">
+    <% @artworks.each do |artwork| %>
+      <% artwork.images.each do |img| %>
+        <div class="masonry-item">
+          <%= image_tag img.variant(resize_to_limit: [600, 600]), class: "img-fluid", alt: artwork.title %>
+        </div>
+      <% end %>
+    <% end %>
+  </div>
+</div>

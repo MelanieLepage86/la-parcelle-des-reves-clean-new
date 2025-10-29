@@ -1,0 +1,116 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <title>Facture Catherine - Commande <%= @order.id %></title>
+  <style>
+    body { font-family: Arial, sans-serif; font-size: 12px; margin: 0; padding: 0; color: #333; }
+    .container { width: 90%; margin: 20px auto; }
+    header { display: flex; justify-content: space-between; align-items: flex-start; margin-bottom: 20px; }
+    .seller-info { line-height: 1.4; }
+    .invoice-title { text-align: right; }
+    table { width: 100%; border-collapse: collapse; margin-top: 15px; }
+    th, td { border: 1px solid #ccc; padding: 8px; text-align: left; }
+    th { background-color: #f5f5f5; }
+    .section-title {
+      background-color: #666;
+      color: #fff;
+      padding: 4px 8px;
+      margin-top: 10px;
+      width: 33%;
+      text-align: left;
+      display: inline-block;
+    }
+    .totals-table { width: 300px; border-collapse: collapse; margin-top: 15px; }
+    .totals-table td { padding: 4px 0; }
+    .totals-label { font-weight: normal; }
+    .totals-value { text-align: right; }
+    .total-ht { font-weight: bold; font-size: 1.1rem; }
+    .small-note { font-size: 0.7rem; color: #555; padding-top: 2px; }
+    footer { font-size: 10px; color: #888; text-align: center; margin-top: 40px; }
+  </style>
+</head>
+<body>
+  <div class="container">
+    <header>
+      <div class="seller-info">
+        <h2>Catherine Barbedienne EI</h2>
+        <p>5, rue Saint Louis<br>77000 Melun<br>
+          <a href="mailto:cath.barbedienne@gmail.com">cath.barbedienne@gmail.com</a><br>
+          <a href="https://www.laparcelledesreves.com">www.laparcelledesreves.com</a><br>
+          06 79 14 05 14
+        </p>
+      </div>
+      <div class="invoice-title">
+        <h3>Facture</h3>
+        <p>Numéro de facture : CI<%= @order.id %><br>
+        Date de facture : <%= @order.created_at.strftime("%d/%m/%Y") %></p>
+      </div>
+    </header>
+
+    <div>
+      <div class="section-title">Facturer à :</div>
+      <p>
+        <strong>Nom :</strong> <%= @order.last_name %><br>
+        <strong>Prénom :</strong> <%= @order.first_name %><br>
+        <strong>Adresse :</strong> <%= @order.address_line %>, <%= @order.postal_code %> <%= @order.city %>, <%= @order.country %><br>
+        <strong>Téléphone :</strong> <%= @order.phone %><br>
+        <strong>Email :</strong> <%= @order.email %>
+      </p>
+    </div>
+    <br>
+
+    <table>
+      <thead>
+        <tr>
+          <th>Description</th>
+          <th>Quantité</th>
+          <th>Prix unitaire HT</th>
+          <th>Prix total HT</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @items.each do |item| %>
+          <tr>
+            <td><%= item.artwork.title %></td>
+            <td><%= item.quantity || 1 %></td>
+            <td><%= number_to_currency(item.unit_price, unit: "€") %></td>
+            <td><%= number_to_currency(item.unit_price * (item.quantity || 1), unit: "€") %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+
+    <table style="width:100%; margin-top:15px; border-collapse: collapse;">
+      <tr>
+        <td style="width:65%;"></td>
+        <td style="width:35%; vertical-align: top;">
+          <table class="totals-table">
+            <tr>
+              <td class="totals-label">Sous-total :</td>
+              <td class="totals-value"><%= number_to_currency(@total_artworks, unit: "€") %></td>
+            </tr>
+            <tr>
+              <td class="totals-label">Frais de port :</td>
+              <td class="totals-value"><%= number_to_currency(@shipping_cost, unit: "€") %></td>
+            </tr>
+            <tr>
+              <td class="totals-label total-ht">Total HT :</td>
+              <td class="totals-value total-ht"><%= number_to_currency(@total, unit: "€") %></td>
+            </tr>
+            <tr>
+              <td colspan="2" class="small-note">(TVA non applicable, article 293 B du CGI)</td>
+            </tr>
+          </table>
+        </td>
+      </tr>
+    </table>
+
+    <br>
+    <footer>
+      Numéro SIRET : 94303736600011 | Code APE 9003A | TVA non applicable<br>
+      Dispense d’immatriculation au registre du commerce et des sociétés, en application de l’article L. 123-1-1 du Code de commerce
+    </footer>
+  </div>
+</body>
+</html>

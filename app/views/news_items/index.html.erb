@@ -1,0 +1,93 @@
+<div class="container py-5">
+  <h1 class="text-center mb-5">Actualités</h1>
+
+  <h2 class="mb-3">Événements à venir</h2>
+  <% if @grouped_news[:upcoming_events].any? %>
+    <div class="row mb-5">
+      <% @grouped_news[:upcoming_events].each do |event| %>
+        <div class="col-md-4 mb-4">
+          <div class="card h-100 shadow-sm">
+            <div class="card-body">
+              <h5><%= event.title %></h5>
+              <p><%= event.date.strftime("%d %B %Y").capitalize %> — <%= event.location %></p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted">Aucun événement à venir.</p>
+  <% end %>
+
+  <h2 class="mb-4 mt-5">Événements passés</h2>
+
+  <% if @grouped_news[:past_events].any? %>
+    <div class="row row-cols-1 row-cols-md-2 g-4">
+      <% @grouped_news[:past_events].each do |event| %>
+        <div class="col">
+          <div class="card shadow-sm border-0 rounded-4 overflow-hidden h-100">
+            <% if event.photos.attached? %>
+              <div id="carousel<%= event.id %>" class="carousel slide" data-bs-ride="carousel">
+                <div class="carousel-inner rounded-top-4">
+                  <% event.photos.each_with_index do |photo, index| %>
+                    <div class="carousel-item <%= 'active' if index.zero? %>">
+                      <div style="height: 480px; background-color: #1F2F40; display: flex; align-items: center; justify-content: center;">
+                        <%= image_tag photo.variant(resize_to_limit: [800, 1200]),
+                            class: "w-100 h-100",
+                            style: "object-fit: contain;" %>
+                      </div>
+                    </div>
+                  <% end %>
+                </div>
+                <% if event.photos.size > 1 %>
+                  <button class="carousel-control-prev" type="button" data-bs-target="#carousel<%= event.id %>" data-bs-slide="prev">
+                    <span class="carousel-control-prev-icon"></span>
+                  </button>
+                  <button class="carousel-control-next" type="button" data-bs-target="#carousel<%= event.id %>" data-bs-slide="next">
+                    <span class="carousel-control-next-icon"></span>
+                  </button>
+                <% end %>
+              </div>
+            <% else %>
+              <div style="height: 480px; background-color: #f8f9fa; display: flex; align-items: center; justify-content: center;">
+                <%= image_tag "placeholder.jpg", class: "w-100 h-100", style: "object-fit: contain;" %>
+              </div>
+            <% end %>
+
+            <div class="card-body bg-light text-center">
+              <p class="text-muted mb-1"><%= event.date.strftime("%d %B %Y").capitalize %></p>
+              <h5 class="card-title fw-semibold mb-2"><%= event.title %></h5>
+              <% if event.location.present? %>
+                <p class="card-text small text-secondary"><%= event.location %></p>
+              <% end %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted text-center">Aucun événement passé.</p>
+  <% end %>
+
+  <h2 class="mb-3 mt-5">Presse</h2>
+  <% if @grouped_news[:press].any? %>
+    <div class="row">
+      <% @grouped_news[:press].each do |press| %>
+        <div class="col-md-4 mb-4">
+          <div class="card shadow-sm h-100">
+            <% if press.photos.attached? %>
+              <%= image_tag press.photos.first.variant(resize_to_fit: [400, 300]), class: "card-img-top", style: "height: 220px; object-fit: cover;" %>
+            <% end %>
+            <div class="card-body">
+              <h5><%= press.title %></h5>
+              <p><%= press.source %> — <%= press.date.strftime("%d %B %Y").capitalize %></p>
+              <%= link_to "Lire l’article", press.link, target: "_blank", class: "btn btn-custom btn-sm" if press.link.present? %>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+  <% else %>
+    <p class="text-muted">Aucun article pour le moment.</p>
+  <% end %>
+</div>

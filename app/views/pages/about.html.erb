@@ -1,0 +1,48 @@
+<div class="container my-5">
+  <div class="row gy-5">
+
+    <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
+      <div class="profile-card text-white text-center">
+        <% page_image = PageImage.find_by(name: "Catherine") %>
+        <img src="<%= page_image&.image&.attached? ? url_for(page_image.image) : asset_path('Catherine.jpg') %>"
+            class="mb-3 profile-img" alt="Catherine">
+        <h3 class="name-title">CATHERINE</h3>
+        <p class="subtitle">Barbedienne</p>
+        <p class="bio px-3 text-justify">
+          Rêveuse dans l'âme, c'est dans un songe d'hiver que m'est apparu le nom de cet espace.<br>
+          Au quotidien, j'aime les plaisirs simples tels que la contemplation de la nature, l'écoute d'un bon vieux vinyle au son vintage, ou encore siroter mes propres boissons à base de plantes du jardin.<br>
+          J'ai également un grand intérêt pour l'herboristerie, le chamanisme, l'énergétique.<br>
+          L'Art est pour moi un moyen d'expression intime et magique, et j'ai à cœur de vous faire voyager dans le monde de tous les possibles à travers mes créations.
+        </p>
+        </div>
+    </div>
+
+    <div class="col-lg-4 col-12 text-center px-4 middle-text mx-auto" style="padding: 130px">
+      <h4>Notre histoire</h4>
+      <br>
+      <p class="text-justify">
+        La Parcelle des Rêves c'est l'histoire d'un lieu partagé, imaginé et rêvé par des sœurs jumelles, Amélie et Catherine Barbedienne, artistes pluridisciplinaires.<br><br>
+        Du haut de nos 35 automnes, nous avons voulu donner vie à un espace commun, afin de proposer une plateforme qui réunirait notre sensibilité pour l'Art, la Nature et le Bien-être.<br>
+        Issues d'une formation en arts plastiques et en photographie, nous avons tout naturellement poursuivi notre exploration du monde créatif ces 11 dernières années, tout en y intégrant notre passion pour la nature, et notre curiosité pour l'énergétique, le corps humain, l'être dans sa globalité.<br>
+        Ici, nous vous invitons à entrer dans un univers singulier, qui s'inspire de nos longues marches en forêt, de nos voyages, de nos rencontres, de notre imaginaire, de notre histoire.
+      </p>
+      <p class="fw-bold">Bienvenue à vous.</p>
+    </div>
+
+    <div class="col-lg-4 col-md-6 col-12 d-flex justify-content-center">
+      <div class="profile-card text-white text-center">
+        <% page_image = PageImage.find_by(name: "Amelie") %>
+        <img src="<%= page_image&.image&.attached? ? url_for(page_image.image) : asset_path('Amelie.jpg') %>"
+            class="mb-3 profile-img" alt="Amélie">
+        <h3 class="name-title">AMÉLIE</h3>
+        <p class="subtitle">Barbedienne</p>
+        <p class="bio px-3 text-justify">
+          Âme sensible et éternelle rêveuse, la Nature et l'Art sont deux refuges essentiels pour moi, deux moyens de m'évader, de me libérer des pensées, sans chercher à atteindre un but précis.<br>
+          Mon approche est surtout intuitive, guidée par l'émotion et le ressenti plutôt que par des repères ou des structures prédéfinies.<br>
+          J'ai une fascination pour le monde végétal et le monde subtil, que j'aime traduire sous forme artistique, quelle qu'elle soit, accompagnée de bonne musique. Je trouve la joie et la sérénité dans des moments simples mais magiques, que j'ai à cœur de partager !
+        </p>
+      </div>
+    </div>
+
+  </div>
+</div>

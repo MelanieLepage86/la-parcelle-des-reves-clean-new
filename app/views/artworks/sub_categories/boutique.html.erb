@@ -1,0 +1,31 @@
+<div class="container py-5">
+  <h1 class="text-center mb-4">Boutique - <%= @sub_category.titleize %></h1>
+
+  <div class="mb-4 text-center">
+    <label for="sort" class="me-2">Trier par :</label>
+    <%= form_with url: artworks_category_sub_category_path(@category, @sub_category),
+                  method: :get, local: true, class: "d-inline-block" do %>
+      <%= select_tag :sort,
+          options_for_select(
+            [['Plus récent', 'recent'],
+             ['Prix croissant', 'price_asc'],
+             ['Prix décroissant', 'price_desc']], params[:sort]),
+          onchange: 'this.form.submit();',
+          class: "form-select d-inline-block w-auto" %>
+    <% end %>
+  </div>
+
+  <% if @highlighted_artworks.present? %>
+    <div class="d-flex flex-wrap justify-content-center gap-4 mb-5">
+      <% @highlighted_artworks.each do |artwork| %>
+        <%= render partial: 'artworks/gallery_item', locals: { artwork: artwork } %>
+      <% end %>
+    </div>
+  <% end %>
+
+  <div class="artworks-grid">
+    <% @artworks.each do |artwork| %>
+      <%= render partial: 'artworks/gallery_item', locals: { artwork: artwork } %>
+    <% end %>
+  </div>
+</div>

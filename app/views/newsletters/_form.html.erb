@@ -1,0 +1,15 @@
+<%= simple_form_for(@newsletter, html: { multipart: true }) do |f| %>
+  <%= f.error_notification %>
+  <%= f.error_notification message: f.object.errors[:base].to_sentence if f.object.errors[:base].present? %>
+
+  <div class="form-inputs">
+    <%= f.input :subject, label: "Sujet" %>
+    <%= f.input :body, label: "Message" %>
+
+    <%= f.input :images, label:"Image(s)", as: :file, input_html: { multiple: true } %>
+  </div>
+
+  <div class="form-actions">
+    <%= f.button :submit, class: "btn-custom" %>
+  </div>
+<% end %>

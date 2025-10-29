@@ -1,0 +1,82 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="UTF-8">
+  <style>
+    body {
+      font-family: Arial, sans-serif;
+      background-color: #f9f9f9;
+      color: #333;
+      margin: 0; padding: 0;
+    }
+    .container {
+      max-width: 600px;
+      background: #ffffff;
+      margin: 20px auto;
+      border-radius: 10px;
+      overflow: hidden;
+      box-shadow: 0 0 10px rgba(0,0,0,0.1);
+    }
+    .header-images {
+      padding: 10px 20px 0 20px;
+      text-align: center;
+    }
+    .header-images img {
+      max-width: 100%;
+      height: auto;
+      margin-bottom: 15px;
+      border-radius: 8px;
+      display: block;
+      margin-left: auto;
+      margin-right: auto;
+    }
+    .content {
+      padding: 20px;
+    }
+    h1 {
+      color: #1F2F40;
+      font-size: 24px;
+      margin-bottom: 15px;
+      font-weight: bold;
+    }
+    p {
+      line-height: 1.5;
+      font-size: 16px;
+      margin-bottom: 15px;
+    }
+    a.unsubscribe {
+      color: #1F2F40;
+      text-decoration: underline;
+      font-size: 14px;
+    }
+  </style>
+</head>
+<body>
+  <div class="container">
+
+    <% if @newsletter.images.attached? %>
+      <div class="header-images">
+        <% @newsletter.images.each do |image| %>
+          <%= image_tag rails_blob_url(image, only_path: false), alt: "Newsletter image", style: "max-width:100%; height:auto; margin-bottom:15px; border-radius:8px;" %>
+        <% end %>
+      </div>
+    <% end %>
+
+    <div class="content">
+      <h1><%= @newsletter.subject %></h1>
+      <p><%= simple_format(@newsletter.body) %></p>
+
+      <% if @subscriber&.persisted? %>
+        <p>
+          Si vous ne souhaitez plus recevoir nos emails,
+          <a href="<%= unsubscribe_url(@subscriber) %>" class="unsubscribe">cliquez ici pour vous désabonner</a>.
+        </p>
+      <% else %>
+        <p style="color: gray; font-style: italic;">
+          (Lien de désabonnement désactivé dans l’aperçu)
+        </p>
+      <% end %>
+    </div>
+  </div>
+</body>
+</html>

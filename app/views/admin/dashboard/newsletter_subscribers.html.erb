@@ -1,0 +1,25 @@
+<div class="p-5">
+  <h1 class="mb-4">Liste des abonnés</h1>
+  <p class="text-muted mb-4">
+    Nombre total : <span class="fw-bold"><%= @subscribers.count %></span>
+  </p>
+
+  <div class="table-responsive">
+    <table class="table table-bordered table-hover shadow-sm">
+      <thead class="table-primary">
+        <tr>
+          <th>Email</th>
+          <th>Date d'inscription</th>
+        </tr>
+      </thead>
+      <tbody>
+        <% @subscribers.each do |subscriber| %>
+          <tr>
+            <td><%= subscriber.email %></td>
+            <td><%= l(subscriber.created_at, format: :short) %></td>
+          </tr>
+        <% end %>
+      </tbody>
+    </table>
+  </div>
+</div>

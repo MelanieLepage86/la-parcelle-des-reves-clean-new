@@ -1,0 +1,43 @@
+.background-home {
+  background-image: asset-url('Background-home.jpg');
+  background-size: cover;
+  background-position: center;
+  background-repeat: no-repeat;
+  height: 100vh;
+  width: 100%;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  text-align: center;
+}
+
+.overlay-text {
+  color: #7A94B0;
+  font-family: 'Cormorant Garamond', serif;
+  padding: 2rem;
+  background-color: rgba(255, 255, 255, 0.6);
+  border-radius: 12px;
+
+  h1 {
+    font-size: 4rem;
+    margin-bottom: 1rem;
+  }
+
+  p {
+    font-size: 2rem;
+    margin-bottom: 3rem;
+  }
+
+  h3 a {
+    font-family: 'Gistesy', sans-serif;
+    font-size: 80px;
+    text-decoration: none;
+    color: #7A94B0;
+    transition: all 0.3s ease;
+
+    &:hover {
+      color: #6a4f4b;
+      text-decoration: underline;
+    }
+  }
+}

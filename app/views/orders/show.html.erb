@@ -1,0 +1,37 @@
+<div class="p-5">
+  <h1>Récapitulatif de commande</h1>
+
+  <% if @order.present? && @order.order_items.any? %>
+    <p class="fs-4 mb-4" style="color: #7A94B0;">Merci pour votre achat !</p>
+
+    <div class="row">
+      <% @order.order_items.each do |item| %>
+        <% artwork = item.artwork %>
+
+        <div class="col-md-2 col-sm-6 col-12">
+          <div class="card card-custom fixed-size text-center">
+            <% if artwork.images.attached? %>
+              <% primary_image = artwork.images.first %>
+              <div class="image-wrapper">
+                <%= image_tag url_for(primary_image), class: "vertical-img", alt: artwork.title %>
+              </div>
+            <% else %>
+              <div class="image-wrapper">
+                <%= image_tag "placeholder.jpg", class: "vertical-img", alt: "Aucune image disponible" %>
+              </div>
+            <% end %>
+
+            <div class="card-body text-center p-2">
+              <h5 class="card-title mb-1" style="font-size: 1rem;"><%= artwork.title %></h5>
+              <p class="card-text fw-bold mb-2" style="font-size: 0.9rem;"><%= number_to_currency(item.unit_price, unit: "€") %></p>
+            </div>
+          </div>
+        </div>
+      <% end %>
+    </div>
+
+    <p class="fs-5 mt-4"><strong>Montant total :</strong> <%= number_to_currency(@order.total_amount, unit: "€") %></p>
+  <% else %>
+    <p>Commande introuvable ou sans items.</p>
+  <% end %>
+</div>

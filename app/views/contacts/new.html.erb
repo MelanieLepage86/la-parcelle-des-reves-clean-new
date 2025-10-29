@@ -1,0 +1,33 @@
+<div class="container mt-4">
+  <%= simple_form_for Subscriber.new, url: subscribers_path, html: { class: "form-inline" } do |f| %>
+    <div class="form-group mb-2">
+      <%= f.input :email,
+                  label: raw('<i class="fa-solid fa-envelope me-2 small" style="color: #7A94B0"></i> Inscrivez-vous à la newsletter'),
+                  label_html: { class: "form-label d-block" },
+                  input_html: { class: "form-control" } %>
+    </div>
+
+    <div class="form-group mb-2">
+      <%= f.button :submit, "S'inscrire", class: "btn btn-custom" %>
+    </div>
+  <% end %>
+
+  <h1 class="mb-4">Contactez-nous</h1>
+
+  <% if flash[:notice] %>
+    <div class="alert alert-success"><%= flash[:notice] %></div>
+  <% elsif flash[:alert] %>
+    <div class="alert alert-danger"><%= flash[:alert] %></div>
+  <% end %>
+
+  <%= simple_form_for @contact_message, url: contacts_path, html: { class: "needs-validation", novalidate: true } do |f| %>
+    <%= f.input :name, label: "Nom", required: true %>
+    <%= f.input :firstname, label: "Prénom", required: true %>
+    <%= f.input :email, label: "Email", required: true %>
+    <%= f.input :message, label: "Message", as: :text, required: true, input_html: { rows: 6 } %>
+
+    <div class="form-group mt-3">
+      <%= f.button :submit, "Envoyer", class: "btn btn-custom" %>
+    </div>
+  <% end %>
+</div>

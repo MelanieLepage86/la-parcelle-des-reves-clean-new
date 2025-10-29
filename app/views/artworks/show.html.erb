@@ -1,0 +1,50 @@
+<div class="container p-5">
+  <div class="row align-items-start">
+    <div class="col-md-6">
+      <% if @artwork.images.attached? %>
+        <div id="artworkCarousel" class="carousel slide mb-4" data-bs-ride="carousel">
+          <div class="carousel-inner">
+            <% @artwork.images.each_with_index do |image, index| %>
+              <div class="carousel-item <%= 'active' if index == 0 %>">
+                <%= image_tag url_for(image), class: "d-block w-100", alt: @artwork.title %>
+              </div>
+            <% end %>
+          </div>
+
+          <% if @artwork.images.size > 1 %>
+            <button class="carousel-control-prev" type="button" data-bs-target="#artworkCarousel" data-bs-slide="prev">
+              <span aria-hidden="true">
+                <i class="fa-solid fa-chevron-left" style="color: #7A94B0; font-size: 2rem;"></i>
+              </span>
+              <span class="visually-hidden">Précédent</span>
+            </button>
+            <button class="carousel-control-next" type="button" data-bs-target="#artworkCarousel" data-bs-slide="next">
+              <span aria-hidden="true">
+                <i class="fa-solid fa-chevron-right" style="color: #7A94B0; font-size: 2rem;"></i>
+              </span>
+              <span class="visually-hidden">Suivant</span>
+            </button>
+          <% end %>
+        </div>
+      <% end %>
+    </div>
+
+    <div class="col-md-6">
+      <h2 class="mb-3"><%= @artwork.title %></h2>
+      <p class="mb-3"><%= simple_format(@artwork.description) %></p>
+      <p class="mb-4 fw-bold fs-5">Prix : <%= number_to_currency(@artwork.price, unit: "€") %></p>
+
+      <div class="text-center mt-4">
+        <% if @artwork.sold_and_paid? %>
+          <p class="text-danger mb-3">
+            Oups ! Cette œuvre a déjà trouvé son propriétaire.<br>
+            N'hésitez pas à nous contacter pour toute commande personnalisée.
+          </p>
+          <%= link_to "Contactez-nous", new_contact_path, class: "btn btn-custom" %>
+        <% else %>
+          <%= button_to 'Ajouter au panier', add_to_cart_path(artwork_id: @artwork.id), method: :post, class: "btn btn-custom px-4 py-2" %>
+        <% end %>
+      </div>
+    </div>
+  </div>
+</div>

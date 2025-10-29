@@ -1,0 +1,91 @@
+<div class="p-5">
+  <div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center">
+      <div class="text-center flex-fill position-relative">
+        <div class="rounded-circle mx-auto p-3" style="width: 60px; height: 60px; background-color: #7A94B0">
+          <i class="fa-solid fa-leaf fa-lg" style="color: #F9F3EF;"></i>
+        </div>
+        <p class="mt-2" style="color: #7A94B0; font-size: 1.2rem;">Panier</p>
+      </div>
+
+      <div class="flex-fill border-top border-3 mx-2" style="margin-top: 1px; border-color: #7A94B0"></div>
+
+      <div class="text-center flex-fill position-relative">
+        <div class="rounded-circle mx-auto p-3" style="width: 60px; height: 60px; background-color: #7A94B0">
+          <i class="fa-solid fa-leaf fa-lg" style="color: #F9F3EF;"></i>
+        </div>
+        <p class="mt-2" style="color: #7A94B0; font-size: 1.2rem;">Formulaire</p>
+      </div>
+
+      <div class="flex-fill border-top border-3 mx-2" style="margin-top: 1px; border-color: #7A94B0"></div>
+
+      <div class="text-center flex-fill position-relative">
+        <div class="rounded-circle mx-auto p-3" style="width: 60px; height: 60px; background-color: #7A94B0">
+          <i class="fa-solid fa-leaf fa-lg" style="color: #F9F3EF;"></i>
+        </div>
+        <p class="mt-2 fw-bold" style="color: #7A94B0; font-size: 1.2rem;">Paiement</p>
+      </div>
+    </div>
+
+    <div class="mt-5">
+      <h3 class="mb-4">Récapitulatif de votre commande</h3>
+      <table class="table" style="font-size: 1.2rem; background-color: #F9F3EF;">
+        <tbody>
+          <tr>
+            <th scope="row">Total des œuvres</th>
+            <td><%= number_to_currency(@order.order_items.sum(&:unit_price), unit: "€") %></td>
+          </tr>
+          <tr>
+            <th scope="row">Frais de port</th>
+            <td><%= number_to_currency(@order.shipping_cost, unit: "€") %></td>
+          </tr>
+          <tr class="fw-bold">
+            <th scope="row">Montant total</th>
+            <td><%= number_to_currency(@order.total_amount, unit: "€") %></td>
+          </tr>
+        </tbody>
+      </table>
+    </div>
+
+    <div class="mt-5">
+      <h3 class="mb-3">Vos informations</h3>
+      <ul class="list-unstyled" style="font-size: 1.2rem;">
+        <li><strong>Nom :</strong> <%= @order.first_name %> <%= @order.last_name %></li>
+        <li><strong>Email :</strong> <%= @order.email %></li>
+        <li><strong>Téléphone :</strong> <%= @order.phone %></li>
+        <li><strong>Adresse :</strong> <%= @order.address_line %>, <%= @order.postal_code %> <%= @order.city %>, <%= @order.country %></li>
+        <li><strong>Mode de livraison :</strong> <%= @order.delivery_method_label %></li>
+      </ul>
+    </div>
+
+    <div class="mt-5">
+      <button type="button" class="btn btn-custom" data-bs-toggle="modal" data-bs-target="#paymentModal" style="font-size: 1.2rem;">
+        Payer
+      </button>
+
+      <div class="modal fade" id="paymentModal" tabindex="-1" aria-labelledby="paymentModalLabel" aria-hidden="true">
+        <div class="modal-dialog">
+          <div class="modal-content"
+              data-controller="payment"
+              data-payment-public-key-value="<%= @stripe_public_key %>"
+              data-payment-order-id-value="<%= @order.id %>"
+              data-payment-redirect-url-value="<%= order_path(@order) %>">
+            <div class="modal-header">
+              <h5 class="modal-title" id="paymentModalLabel">Paiement</h5>
+              <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Fermer"></button>
+            </div>
+            <div class="modal-body">
+              <div data-payment-target="cardElement" id="card-element" class="mb-3"></div>
+              <button data-payment-target="submitButton" class="btn btn-custom w-100">
+                Confirmer et payer
+              </button>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+    <div class="mt-3" style="font-size: 1.2rem;">
+      <%= button_to "Annuler la commande", cancel_order_path(@order), method: :delete, data: { confirm: "Êtes-vous sûr de vouloir annuler cette commande ?" }, class: "btn btn-custom w-10" %>
+    </div>
+  </div>
+</div>

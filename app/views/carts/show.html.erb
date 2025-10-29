@@ -1,0 +1,98 @@
+<div class="p-5">
+  <div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center">
+
+      <div class="text-center flex-fill position-relative">
+        <div class="rounded-circle mx-auto p-3" style="width: 60px; height: 60px; background-color: #7A94B0">
+          <i class="fa-solid fa-leaf fa-lg" style="color: #F9F3EF;"></i>
+        </div>
+        <p class="mt-2 fw-bold" style="color: #7A94B0; font-size: 1.2rem;">Panier</p>
+      </div>
+
+      <div class="flex-fill border-top border-3 mx-2" style="margin-top: 1px; border-color: #7A94B0"></div>
+
+      <div class="text-center flex-fill position-relative">
+        <div class="rounded-circle mx-auto p-3" style="width: 60px; height: 60px; background-color: #F9F3EF">
+          <i class="fa-solid fa-leaf fa-lg" style="color: #7A94B0;"></i>
+        </div>
+        <p class="mt-2 text-muted" style="color: #7A94B0; font-size: 1.2rem;">Formulaire</p>
+      </div>
+
+      <div class="flex-fill border-top border-3 mx-2" style="margin-top: 1px; border-color: #7A94B0"></div>
+
+      <div class="text-center flex-fill position-relative">
+        <div class="rounded-circle mx-auto p-3" style="width: 60px; height: 60px;  background-color: #F9F3EF">
+          <i class="fa-solid fa-leaf fa-lg" style="color: #7A94B0;"></i>
+        </div>
+        <p class="mt-2 text-muted" style="color: #7A94B0; font-size: 1.2rem;">Paiement</p>
+      </div>
+
+    </div>
+  </div>
+
+  <div class="container mt-5">
+    <div class="row">
+      <div class="col-md-8">
+        <% if @artworks.any? %>
+          <ul class="list-unstyled">
+            <% @artworks.each do |art| %>
+              <li class="d-flex align-items-center mb-3">
+                <% if art.images.attached? %>
+                  <%= image_tag url_for(art.images.first), alt: art.title, width: 100, class: "me-3" %>
+                <% end %>
+
+                <div style="font-size: 1.2rem;">
+                  <strong><%= art.title %></strong> -
+                  <%= number_to_currency(art.price, unit: "€", separator: ",", delimiter: " ") %><br>
+
+                  <%= button_to remove_from_cart_path(artwork_id: art.id),
+                      method: :post,
+                      form: { class: 'd-inline' },
+                      data: { confirm: 'Voulez-vous vraiment retirer cet article ?' },
+                      class: 'btn btn-custom btn-sm mt-2' do %>
+                    <i class="fa-solid fa-trash-can"></i>
+                  <% end %>
+                </div>
+              </li>
+            <% end %>
+          </ul>
+
+          <p style="font-size: 1.2rem;"><strong>Total :</strong>
+            <%= number_to_currency(@artworks.sum(&:price), unit: "€", separator: ",", delimiter: " ")%>
+          </p>
+
+          <div class="d-flex gap-2 mt-3 flex-wrap">
+            <%= link_to "Continuer mes achats", boutique_artworks_path, class: "btn btn-custom", style: "font-size: 1.2rem;" %>
+            <%= link_to "Finaliser ma commande", checkout_info_cart_path, class: "btn btn-custom", style: "font-size: 1.2rem;" %>
+          </div>
+        <% else %>
+          <p style="font-size: 1.2rem;">Votre panier est vide.</p>
+        <% end %>
+      </div>
+
+      <div class="col-md-4 mt-5">
+        <div class="card border-secondary mb-3"
+            style="border-radius: 16px; overflow: hidden; border: 1px solid #7A94B0;
+                    box-shadow: 0 4px 10px rgba(0,0,0,0.1); background-color: #fff;">
+
+          <div class="card-header"
+              style="color: #7A94B0; font-size: 1.6rem; font-weight: 600;
+                      background-color: #fff; border-bottom: 1px solid #7A94B0;
+                      border-top-left-radius: 16px; border-top-right-radius: 16px;">
+            Mode de Livraison
+          </div>
+
+          <div class="card-body"
+              style="color: #7A94B0; background-color: #F9F3EF;
+                      border-bottom-left-radius: 16px; border-bottom-right-radius: 16px; font-size: 1.2rem;">
+            <p class="card-text" style="margin-bottom: 0;">
+              Il est possible de procéder à une remise en main propre sur Melun ou en région parisienne
+              (nous vous contacterons pour les détails).<br>
+              Merci de préciser votre choix dans le formulaire ci-après.
+            </p>
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+</div>

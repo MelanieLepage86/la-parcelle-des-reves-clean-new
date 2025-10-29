@@ -1,0 +1,70 @@
+<div class="container mt-4">
+  <div class="container my-4">
+    <div class="d-flex justify-content-between align-items-center">
+
+      <div class="text-center flex-fill position-relative">
+        <div class="rounded-circle mx-auto p-3" style="width: 60px; height: 60px; background-color: #7A94B0">
+          <i class="fa-solid fa-leaf fa-lg" style="color: #F9F3EF;"></i>
+        </div>
+        <p class="mt-2" style="color: #7A94B0; font-size: 1.2rem;">Panier</p>
+      </div>
+
+      <div class="flex-fill border-top border-3 mx-2" style="margin-top: 1px; border-color: #ffc107;"></div>
+
+      <div class="text-center flex-fill position-relative">
+        <div class="rounded-circle mx-auto p-3" style="width: 60px; height: 60px; background-color: #7A94B0">
+          <i class="fa-solid fa-leaf fa-lg" style="color: #F9F3EF;"></i>
+        </div>
+        <p class="mt-2 fw-bold" style="color: #7A94B0; font-size: 1.2rem;">Formulaire</p>
+      </div>
+
+      <div class="flex-fill border-top border-3 mx-2" style="margin-top: 1px; border-color: #ffc107;"></div>
+
+      <div class="text-center flex-fill position-relative">
+        <div class="rounded-circle mx-auto p-3" style="width: 60px; height: 60px; background-color: #F9F3EF">
+          <i class="fa-solid fa-leaf fa-lg" style="color: #7A94B0; font-size: 1.2rem;"></i>
+        </div>
+        <p class="mt-2 text-muted">Paiement</p>
+      </div>
+
+    </div>
+  </div>
+  <h2 class="text-center mb-4">Informations de livraison</h2>
+
+  <%= simple_form_for @order, url: checkout_create_order_cart_path, method: :post, local: true,
+        html: { class: "mx-auto", style: "max-width: 600px;" } do |f| %>
+
+    <div class="row g-3">
+      <div class="col-12">
+        <%= f.input :delivery_method,
+                    label: "Mode de réception",
+                    collection: Order.delivery_methods.map { |key, _| [t("activerecord.attributes.order.delivery_method.#{key}"), key] },
+                    prompt: "Choisissez un mode de réception",
+                    required: true,
+                    input_html: { class: "form-select" } %>
+      </div>
+
+      <div class="col-12"><%= f.input :first_name, label: "Prénom" %></div>
+      <div class="col-12"><%= f.input :last_name, label: "Nom" %></div>
+      <div class="col-12"><%= f.input :email, label: "Email" %></div>
+      <div class="col-12"><%= f.input :phone, label: "Téléphone" %></div>
+      <div class="col-12"><%= f.input :address_line, label: "Adresse postale" %></div>
+      <div class="col-12"><%= f.input :postal_code, label: "Code postal" %></div>
+      <div class="col-12"><%= f.input :city, label: "Ville" %></div>
+      <div class="col-12">
+        <%= f.input :country,
+                    label: "Pays",
+                    collection: ISO3166::Country.all.map { |country|
+                      [country.translations[I18n.locale.to_s] || country.name, country.alpha2]
+                    },
+                    prompt: "Sélectionner un pays",
+                    required: true,
+                    input_html: { class: "form-select" } %>
+      </div>
+    </div>
+
+    <div class="mt-4 mb-5 text-center">
+      <%= f.submit "Procéder au paiement", class: "btn btn-custom mt-3" %>
+    </div>
+  <% end %>
+</div>

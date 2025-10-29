@@ -1,0 +1,68 @@
+<div class="p-5">
+  <%= simple_form_for artwork, html: { multipart: true, data: { controller: "sub-category" } } do |f| %>
+    <% if artwork.errors.any? %>
+      <div class="alert alert-danger">
+        <h4><%= pluralize(artwork.errors.count, "erreur") %> empêchent l'enregistrement :</h4>
+        <ul>
+          <% artwork.errors.full_messages.each do |msg| %>
+            <li><%= msg %></li>
+          <% end %>
+        </ul>
+      </div>
+    <% end %>
+
+    <div class="form-row">
+      <div class="form-group col-md-6">
+        <%= f.input :title, label: "Titre de l’œuvre" %>
+      </div>
+
+      <div class="form-group col-md-6">
+        <%= f.input :price, label: "Prix (€)", input_html: { step: 0.01 } %>
+      </div>
+    </div>
+
+    <%= f.input :description, label: "Description", as: :text, input_html: { rows: 3 } %>
+
+    <%= f.input :category,
+                label: "Catégorie",
+                collection: ['Portfolio', 'Boutique', 'Prestation'],
+                prompt: "Choisir une catégorie",
+                input_html: { data: { sub_category_target: "category", action: "change->sub-category#updateSubCategories" } } %>
+
+    <%= f.input :sub_category,
+                label: "Sous-catégorie",
+                collection: [],
+                prompt: "Choisir une sous-catégorie",
+                input_html: { data: { sub_category_target: "subCategory" } } %>
+
+    <%= f.input :shipping_category,
+                label: "Catégorie de livraison (selon le poids)",
+                collection: [
+                  ["Catégorie 1 – jusqu’à 250g", "categorie_1"],
+                  ["Catégorie 2 – 250g à 500g", "categorie_2"],
+                  ["Catégorie 3 – 500g à 1kg", "categorie_3"],
+                  ["Catégorie 4 – 1kg à 2kg", "categorie_4"]
+                ],
+                prompt: "Choisir une catégorie de livraison",
+                required: true %>
+
+    <%= f.input :published,
+                label: "Publier ?",
+                as: :boolean,
+                input_html: { checked: artwork.published.nil? ? true : artwork.published } %>
+
+    <%= f.input :images, label: "Images", as: :file, input_html: { multiple: true } %>
+
+    <% if artwork.images.attached? %>
+      <div class="row mt-3">
+        <% artwork.images.each do |image| %>
+          <div class="col-md-3">
+            <%= image_tag image.variant(resize_to_limit: [300, 300]), class: "img-thumbnail" %>
+          </div>
+        <% end %>
+      </div>
+    <% end %>
+
+    <%= f.button :submit, "Enregistrer", class: "btn btn-custom mt-4" %>
+  <% end %>
+</div>

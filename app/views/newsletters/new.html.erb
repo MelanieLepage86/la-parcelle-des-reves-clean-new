@@ -1,0 +1,11 @@
+<div class="p-5">
+  <h1>Nouvelle newsletter</h1>
+
+  <%= render "form", newsletter: @newsletter %>
+
+  <br>
+
+  <div>
+    <%= link_to "Retour", admin_dashboard_path, class: "btn btn-custom" %>
+  </div>
+</div>
