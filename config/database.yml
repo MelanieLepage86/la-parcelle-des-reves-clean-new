@@ -79,6 +79,4 @@ test:
 #
 production:
   <<: *default
-  database: la_parcelle_des_reves_clean_new_production
-  username: la_parcelle_des_reves_clean_new
-  password: <%= ENV["LA_PARCELLE_DES_REVES_CLEAN_NEW_DATABASE_PASSWORD"] %>
+  url: <%= ENV['DATABASE_URL'] %>
