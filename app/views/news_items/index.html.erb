@@ -9,7 +9,7 @@
           <div class="card h-100 shadow-sm">
             <div class="card-body">
               <h5><%= event.title %></h5>
-              <p><%= event.date.strftime("%d %B %Y").capitalize %> — <%= event.location %></p>
+              <p><%= event.date.strftime("%d/%m/%Y") %> — <%= event.location %></p>
             </div>
           </div>
         </div>
@@ -22,7 +22,7 @@
   <h2 class="mb-4 mt-5">Événements passés</h2>
 
   <% if @grouped_news[:past_events].any? %>
-    <div class="row row-cols-1 row-cols-md-2 g-4">
+    <div class="row row-cols-1 row-cols-sm-2 row-cols-lg-3 g-4">
       <% @grouped_news[:past_events].each do |event| %>
         <div class="col">
           <div class="card shadow-sm border-0 rounded-4 overflow-hidden h-100">
@@ -55,7 +55,7 @@
             <% end %>
 
             <div class="card-body bg-light text-center">
-              <p class="text-muted mb-1"><%= event.date.strftime("%d %B %Y").capitalize %></p>
+              <p class="text-muted mb-1"><%= event.date.strftime("%d/%m/%Y") %></p>
               <h5 class="card-title fw-semibold mb-2"><%= event.title %></h5>
               <% if event.location.present? %>
                 <p class="card-text small text-secondary"><%= event.location %></p>
@@ -80,7 +80,7 @@
             <% end %>
             <div class="card-body">
               <h5><%= press.title %></h5>
-              <p><%= press.source %> — <%= press.date.strftime("%d %B %Y").capitalize %></p>
+              <p><%= press.source %> — <%= press.date.strftime("%d/%m/%Y") %></p>
               <%= link_to "Lire l’article", press.link, target: "_blank", class: "btn btn-custom btn-sm" if press.link.present? %>
             </div>
           </div>
