@@ -79,8 +79,6 @@ class CartsController < ApplicationController
 
       @order.update!(stripe_payment_intent_id: payment_intent.id)
     end
-
-    @stripe_public_key = ENV['STRIPE_PUBLISHABLE_KEY'] || ENV['STRIPE_TEST_PUBLISHABLE_KEY']
   end
 
   def remove
