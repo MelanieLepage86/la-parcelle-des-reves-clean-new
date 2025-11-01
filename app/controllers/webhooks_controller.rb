@@ -66,6 +66,7 @@ class WebhooksController < ApplicationController
       end
 
       amount = (item.unit_price.to_f * 100).to_i
+      Rails.logger.info("🔹 Création du transfert pour l’artiste #{artist.id} - montant: #{amount}")
 
       begin
         transfer = Stripe::Transfer.create(
