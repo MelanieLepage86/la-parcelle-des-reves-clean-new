@@ -56,10 +56,12 @@ class WebhooksController < ApplicationController
 
     transfer_group = "order_#{order.id}"
     Rails.logger.info("💰 Paiement reçu pour commande ##{order.id} – création des transferts Stripe…")
+    Rails.logger.info("➡️ Nombre d'items dans la commande : #{order.order_items.count}")
 
-    # 1️⃣ Transferts pour chaque œuvre
+    # TRANSFERTS ARTISTES
     order.order_items.includes(:artwork).each do |item|
       artist = item.artwork.user
+      Rails.logger.info("🔹 Item ##{item.id} - artist ##{artist.id}, stripe_account_id=#{artist.stripe_account_id}, unit_price=#{item.unit_price}")
 
       if artist.stripe_account_id.blank?
         Rails.logger.warn("⚠️ Artwork ##{item.artwork.id} sans compte Stripe pour l’artiste ##{artist.id}")
@@ -67,6 +69,11 @@ class WebhooksController < ApplicationController
       end
 
       amount = (item.unit_price.to_f * 100).to_i
+      if amount <= 0
+        Rails.logger.warn("⚠️ Montant du transfert pour l’artiste ##{artist.id} est <= 0, transfert ignoré")
+        next
+      end
+
       Rails.logger.info("🔹 Création du transfert pour l’artiste #{artist.id} - montant: #{amount}")
 
       begin
@@ -88,42 +95,44 @@ class WebhooksController < ApplicationController
       end
     end
 
-    # 2️⃣ Transfert des frais de port (uniquement si > 0)
-    shipping_amount = (order.shipping_cost.to_f * 100).to_i
-    if shipping_amount > 0
-      most_expensive_item = order.order_items.max_by(&:unit_price)
+    # TRANSFERTS FRAIS DE PORT (uniquement si > 0)
+    most_expensive_item = order.order_items.max_by(&:unit_price)
+    if most_expensive_item
       artist = most_expensive_item.artwork.user
+      shipping_amount = (order.shipping_cost.to_f * 100).to_i
 
-      if artist&.stripe_account_id.present?
-        Rails.logger.info("🔹 Création du transfert des frais de port pour l’artiste #{artist.id} - montant: #{shipping_amount}")
-
-        begin
-          transfer = Stripe::Transfer.create(
-            amount: shipping_amount,
-            currency: 'eur',
-            destination: artist.stripe_account_id,
-            transfer_group: transfer_group,
-            description: "Frais de port – commande ##{order.id}",
-            metadata: {
-              order_id: order.id,
-              artist_id: artist.id,
-              shipping: true
-            }
-          )
-          Rails.logger.info("✅ Transfert des frais de port (#{shipping_amount} centimes) à l’artiste ##{artist.id} – #{transfer.id}")
-        rescue => e
-          Rails.logger.error("❌ Échec du transfert des frais de port à l’artiste ##{artist.id} – #{e.message}")
+      if shipping_amount > 0
+        if artist&.stripe_account_id.present?
+          begin
+            transfer = Stripe::Transfer.create(
+              amount: shipping_amount,
+              currency: 'eur',
+              destination: artist.stripe_account_id,
+              transfer_group: transfer_group,
+              description: "Frais de port – commande ##{order.id}",
+              metadata: {
+                order_id: order.id,
+                artist_id: artist.id,
+                shipping: true
+              }
+            )
+            Rails.logger.info("✅ Transfert des frais de port (#{shipping_amount} centimes) à l’artiste ##{artist.id} – #{transfer.id}")
+          rescue => e
+            Rails.logger.error("❌ Échec du transfert des frais de port à l’artiste ##{artist.id} – #{e.message}")
+          end
+        else
+          Rails.logger.warn("⚠️ L’artiste pour les frais de port n’a pas de compte Stripe (id=#{artist&.id})")
         end
       else
-        Rails.logger.warn("⚠️ L’artiste pour les frais de port n’a pas de compte Stripe (id=#{artist&.id})")
+        Rails.logger.info("ℹ️ Pas de frais de port à transférer pour la commande ##{order.id}")
       end
     else
-      Rails.logger.info("ℹ️ Pas de frais de port à transférer pour la commande ##{order.id}")
+      Rails.logger.warn("⚠️ Aucun item pour déterminer l’artiste des frais de port")
     end
 
-    # 3️⃣ Mise à jour de l’état et mail de confirmation
     order.update!(status: 'payment_confirmed')
     Rails.logger.info("✅ Commande ##{order.id} marquée comme payée")
+
     OrderMailer.confirmation_email(order).deliver_later
     Rails.logger.info("📧 Mail de confirmation envoyé pour la commande ##{order.id}")
   end
