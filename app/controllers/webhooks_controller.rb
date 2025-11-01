@@ -57,6 +57,7 @@ class WebhooksController < ApplicationController
     transfer_group = "order_#{order.id}"
     Rails.logger.info("💰 Paiement reçu pour commande ##{order.id} – création des transferts Stripe…")
 
+    # 1️⃣ Transferts pour chaque œuvre
     order.order_items.includes(:artwork).each do |item|
       artist = item.artwork.user
 
@@ -87,13 +88,14 @@ class WebhooksController < ApplicationController
       end
     end
 
-    most_expensive_item = order.order_items.max_by(&:unit_price)
-
-    if most_expensive_item
+    # 2️⃣ Transfert des frais de port (uniquement si > 0)
+    shipping_amount = (order.shipping_cost.to_f * 100).to_i
+    if shipping_amount > 0
+      most_expensive_item = order.order_items.max_by(&:unit_price)
       artist = most_expensive_item.artwork.user
 
       if artist&.stripe_account_id.present?
-        shipping_amount = (order.shipping_cost.to_f * 100).to_i
+        Rails.logger.info("🔹 Création du transfert des frais de port pour l’artiste #{artist.id} - montant: #{shipping_amount}")
 
         begin
           transfer = Stripe::Transfer.create(
@@ -116,12 +118,12 @@ class WebhooksController < ApplicationController
         Rails.logger.warn("⚠️ L’artiste pour les frais de port n’a pas de compte Stripe (id=#{artist&.id})")
       end
     else
-      Rails.logger.warn("⚠️ Aucun item pour déterminer l’artiste des frais de port")
+      Rails.logger.info("ℹ️ Pas de frais de port à transférer pour la commande ##{order.id}")
     end
 
+    # 3️⃣ Mise à jour de l’état et mail de confirmation
     order.update!(status: 'payment_confirmed')
     Rails.logger.info("✅ Commande ##{order.id} marquée comme payée")
-
     OrderMailer.confirmation_email(order).deliver_later
     Rails.logger.info("📧 Mail de confirmation envoyé pour la commande ##{order.id}")
   end
