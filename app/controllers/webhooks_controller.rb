@@ -4,10 +4,9 @@ class WebhooksController < ApplicationController
   def stripe
     payload = request.body.read
     sig_header = request.env['HTTP_STRIPE_SIGNATURE']
-    webhook_secret = ENV['STRIPE_WEBHOOK_SECRET'].presence || ENV['STRIPE_TEST_WEBHOOK_SECRET']
 
     begin
-      event = Stripe::Webhook.construct_event(payload, sig_header, webhook_secret)
+      event = Stripe::Webhook.construct_event(payload, sig_header, ENV['STRIPE_WEBHOOK_SECRET'])
     rescue JSON::ParserError => e
       Rails.logger.error("Webhook JSON parsing error: #{e.message}")
       return head :bad_request
@@ -25,8 +24,6 @@ class WebhooksController < ApplicationController
       Rails.logger.info("📌 charge.succeeded reçu")
     when 'transfer.created'
       Rails.logger.info("🔁 transfer.created reçu : #{event['data']['object']['id']}")
-    when 'transfer.paid'
-      handle_transfer_paid(event['data']['object'])
     else
       Rails.logger.info("Webhook non traité : #{event['type']}")
     end
