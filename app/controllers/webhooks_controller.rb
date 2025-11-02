@@ -3,27 +3,23 @@ class WebhooksController < ApplicationController
   skip_before_action :verify_authenticity_token, only: [:stripe]
 
   def stripe
+    # Log complet des headers
+    Rails.logger.info "🔍 Headers reçus : #{request.headers.env.select { |k,v| k.start_with?('HTTP_') || k == 'CONTENT_TYPE' }}"
+
+    sig_header = request.headers['Stripe-Signature']
+    Rails.logger.info "🔍 Stripe-Signature header: #{sig_header.inspect}"
+
     payload = request.body.read
-    sig_header = request.headers['HTTP_STRIPE_SIGNATURE']
+    Rails.logger.info "🔍 Payload reçu (preview 500 chars) : #{payload[0..500]}"
 
-    # --- 🔹 Logging sécurisé des headers Stripe ---
-    stripe_headers = request.headers.to_h.select do |k, v|
-      k.to_s.downcase.include?('stripe') && v.is_a?(String)
-    end
-    Rails.logger.info("🔍 Stripe headers: #{stripe_headers.inspect}")
-    Rails.logger.info("🔍 sig_header env: #{sig_header.inspect}")
-    Rails.logger.info("🔍 Payload preview: #{payload[0..200]}...")
-
-    # --- 🔹 Vérification de signature Stripe ---
     begin
-      event = Stripe::Webhook.construct_event(payload, sig_header, ENV['STRIPE_WEBHOOK_SECRET'])
-    rescue JSON::ParserError => e
-      Rails.logger.error("❌ Webhook JSON parsing error: #{e.message}")
-      return head :bad_request
-    rescue Stripe::SignatureVerificationError => e
-      Rails.logger.error("❌ Webhook signature verification error: #{e.message}")
-      return head :bad_request
-    end
+      event = Stripe::Webhook.construct_event(
+        payload,
+        sig_header,
+        ENV['STRIPE_WEBHOOK_SECRET']
+      )
+
+    Rails.logger.info "✅ Webhook Stripe vérifié avec succès : #{event.type}"
 
     Rails.logger.info("📩 Webhook Stripe reçu : #{event['type']}")
     Rails.logger.info("🔍 Secret utilisé (début): #{ENV['STRIPE_WEBHOOK_SECRET'][0..5]}...")
@@ -40,10 +36,14 @@ class WebhooksController < ApplicationController
       Rails.logger.info("ℹ️ Webhook non géré : #{event['type']}")
     end
 
-    render json: { status: 'received' }, status: :ok
-  rescue => e
-    Rails.logger.error("💥 WEBHOOK CRASH: #{e.message} - #{e.backtrace.first(5).join(' | ')}")
-    head :internal_server_error
+     head :ok
+    rescue JSON::ParserError => e
+      Rails.logger.error "❌ Payload invalide : #{e.message}"
+      head :bad_request
+    rescue Stripe::SignatureVerificationError => e
+      Rails.logger.error "❌ Erreur vérification signature Stripe : #{e.message}"
+      head :bad_request
+    end
   end
 
   private
