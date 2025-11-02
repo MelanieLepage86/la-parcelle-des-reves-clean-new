@@ -48,9 +48,9 @@ class WebhooksController < ApplicationController
 
     order = Order.find_by(stripe_payment_intent_id: payment_intent['id'])
 
-    unless order
+    if order.nil?
       Rails.logger.warn("⚠️ Aucun Order trouvé pour payment_intent #{payment_intent['id']}")
-      return
+      return  # <--- RETURN EARLY POUR FAKE
     end
 
     if order.payment_confirmed?
