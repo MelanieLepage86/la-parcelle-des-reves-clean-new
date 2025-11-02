@@ -4,13 +4,17 @@ class WebhooksController < ApplicationController
 
   def stripe
     payload = request.body.read
-    sig_header = request.env['HTTP_STRIPE_SIGNATURE']
+    sig_header = request.headers['HTTP_STRIPE_SIGNATURE']
 
-    Rails.logger.info("🔍 ALL STRIPE HEADERS: #{request.headers.select { |k| k.downcase.include?('stripe') }.inspect}")
+    # --- 🔹 Logging sécurisé des headers Stripe ---
+    stripe_headers = request.headers.to_h.select do |k, v|
+      k.to_s.downcase.include?('stripe') && v.is_a?(String)
+    end
+    Rails.logger.info("🔍 Stripe headers: #{stripe_headers.inspect}")
     Rails.logger.info("🔍 sig_header env: #{sig_header.inspect}")
     Rails.logger.info("🔍 Payload preview: #{payload[0..200]}...")
 
-    # ✅ Vérification de signature Stripe
+    # --- 🔹 Vérification de signature Stripe ---
     begin
       event = Stripe::Webhook.construct_event(payload, sig_header, ENV['STRIPE_WEBHOOK_SECRET'])
     rescue JSON::ParserError => e
@@ -24,7 +28,7 @@ class WebhooksController < ApplicationController
     Rails.logger.info("📩 Webhook Stripe reçu : #{event['type']}")
     Rails.logger.info("🔍 Secret utilisé (début): #{ENV['STRIPE_WEBHOOK_SECRET'][0..5]}...")
 
-    # ✅ Traitement des événements
+    # --- 🔹 Traitement des événements ---
     case event['type']
     when 'payment_intent.succeeded'
       handle_successful_payment(event['data']['object'])
@@ -55,15 +59,8 @@ class WebhooksController < ApplicationController
       return
     end
 
-    if order.payment_confirmed?
-      Rails.logger.info("ℹ️ Paiement déjà confirmé pour la commande ##{order.id}")
-      return
-    end
-
-    if order.status != 'pending'
-      Rails.logger.warn("⚠️ Order ##{order.id} dans un état inattendu (#{order.status})")
-      return
-    end
+    return Rails.logger.info("ℹ️ Paiement déjà confirmé pour la commande ##{order.id}") if order.payment_confirmed?
+    return Rails.logger.warn("⚠️ Order ##{order.id} dans un état inattendu (#{order.status})") unless order.status == 'pending'
 
     transfer_group = "order_#{order.id}"
     Rails.logger.info("💰 Paiement reçu pour commande ##{order.id} – création des transferts Stripe…")
@@ -74,15 +71,8 @@ class WebhooksController < ApplicationController
       artist = item.artwork.user
       amount = (item.unit_price.to_f * 100).to_i
 
-      if artist.stripe_account_id.blank?
-        Rails.logger.warn("⚠️ Artist ##{artist.id} sans compte Stripe, transfert ignoré.")
-        next
-      end
-
-      if amount <= 0
-        Rails.logger.warn("⚠️ Montant transfert <= 0 pour artiste ##{artist.id}")
-        next
-      end
+      next if artist.stripe_account_id.blank?
+      next if amount <= 0
 
       begin
         transfer = Stripe::Transfer.create(
@@ -111,7 +101,7 @@ class WebhooksController < ApplicationController
 
       if shipping_amount > 0 && artist&.stripe_account_id.present?
         begin
-          created_transfer = Stripe::Transfer.create(
+          transfer = Stripe::Transfer.create(
             amount: shipping_amount,
             currency: 'eur',
             destination: artist.stripe_account_id,
@@ -123,7 +113,7 @@ class WebhooksController < ApplicationController
               shipping: true
             }
           )
-          Rails.logger.info("✅ Transfert frais de port (#{shipping_amount} centimes) → artiste ##{artist.id}, ID Stripe: #{created_transfer.id}")
+          Rails.logger.info("✅ Transfert frais de port (#{shipping_amount} centimes) → artiste ##{artist.id}")
         rescue Stripe::StripeError => e
           Rails.logger.error("❌ Erreur transfert frais de port : #{e.message}")
         end
@@ -133,7 +123,6 @@ class WebhooksController < ApplicationController
     # --- 🔸 Finalisation commande ---
     order.update!(status: 'payment_confirmed')
     Rails.logger.info("✅ Commande ##{order.id} marquée comme payée")
-
     OrderMailer.confirmation_email(order).deliver_later
     Rails.logger.info("📧 Mail de confirmation envoyé pour commande ##{order.id}")
   rescue => e
