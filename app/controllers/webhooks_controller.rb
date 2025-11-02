@@ -5,7 +5,6 @@ class WebhooksController < ApplicationController
     payload = request.body.read
     sig_header = request.env['HTTP_STRIPE_SIGNATURE']
 
-
     Rails.logger.info("🔍 ALL STRIPE HEADERS: #{request.headers.select { |k| k.downcase.include?('stripe') }.inspect}")
     Rails.logger.info("🔍 sig_header env: #{request.env['HTTP_STRIPE_SIGNATURE'].inspect}")
     Rails.logger.info("🔍 sig_header headers: #{request.headers['Stripe-Signature'].inspect}")
@@ -37,11 +36,16 @@ class WebhooksController < ApplicationController
     end
 
     render json: { status: 'received' }, status: :ok
+  rescue => e
+    Rails.logger.error("💥 WEBHOOK CRASH: #{e.message} - #{e.backtrace.first(5).join(' | ')}")
+    head :internal_server_error
   end
 
   private
 
   def handle_successful_payment(payment_intent)
+    Rails.logger.info("💰 Handling PI #{payment_intent['id']} - amount #{payment_intent['amount_received']} - metadata #{payment_intent['metadata'].inspect}")
+
     order = Order.find_by(stripe_payment_intent_id: payment_intent['id'])
 
     unless order
@@ -95,7 +99,7 @@ class WebhooksController < ApplicationController
           }
         )
         Rails.logger.info("✅ Transfert de #{amount} centimes à l’artiste ##{artist.id} – #{transfer.id}")
-      rescue => e
+      rescue Stripe::StripeError => e
         Rails.logger.error("❌ Échec du transfert pour l’artiste ##{artist.id} – #{e.message}")
       end
     end
@@ -122,7 +126,7 @@ class WebhooksController < ApplicationController
               }
             )
             Rails.logger.info("✅ Transfert des frais de port (#{shipping_amount} centimes) à l’artiste ##{artist.id} – #{transfer.id}")
-          rescue => e
+          rescue Stripe::StripeError => e
             Rails.logger.error("❌ Échec du transfert des frais de port à l’artiste ##{artist.id} – #{e.message}")
           end
         else
@@ -140,6 +144,8 @@ class WebhooksController < ApplicationController
 
     OrderMailer.confirmation_email(order).deliver_later
     Rails.logger.info("📧 Mail de confirmation envoyé pour la commande ##{order.id}")
+  rescue => e
+    Rails.logger.error("💥 Crash handle_payment: #{e.message} - #{e.backtrace.first(5).join(' | ')}")
   end
 
   def handle_transfer_paid(transfer)
