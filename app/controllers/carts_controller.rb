@@ -57,7 +57,7 @@ class CartsController < ApplicationController
     end
 
     session[:cart] = []
-    redirect_to checkout_payment_cart_path(@order)
+    redirect_to checkout_payment_cart_path(id: @order.id)
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.error "=== ERREURS VALIDATION ORDER ==="
     Rails.logger.error "Exception: #{e.message}"
@@ -76,16 +76,12 @@ class CartsController < ApplicationController
         metadata: { order_id: @order.id },
         transfer_group: "order_#{@order.id}"
       )
-
       @order.update!(stripe_payment_intent_id: payment_intent.id)
     end
 
     @stripe_public_key = ENV['STRIPE_PUBLISHABLE_KEY']
 
-    respond_to do |format|
-      format.html # rend la page normalement
-      format.turbo_stream { render :checkout_payment, formats: [:html] }
-    end
+    render :checkout_payment, status: :ok
   end
 
   def remove
