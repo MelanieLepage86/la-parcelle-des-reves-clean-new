@@ -81,6 +81,11 @@ class CartsController < ApplicationController
     end
 
     @stripe_public_key = ENV['STRIPE_PUBLISHABLE_KEY']
+
+    respond_to do |format|
+      format.html # rend la page normalement
+      format.turbo_stream { render :checkout_payment, formats: [:html] }
+    end
   end
 
   def remove
