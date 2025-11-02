@@ -139,13 +139,17 @@ class WebhooksController < ApplicationController
       Rails.logger.warn("⚠️ Aucun item pour déterminer l’artiste des frais de port")
     end
 
-    order.update!(status: 'payment_confirmed')
-    Rails.logger.info("✅ Commande ##{order.id} marquée comme payée")
+    begin
+      order.update!(status: 'payment_confirmed')
+      Rails.logger.info("✅ Commande ##{order.id} marquée comme payée")
 
-    OrderMailer.confirmation_email(order).deliver_later
-    Rails.logger.info("📧 Mail de confirmation envoyé pour la commande ##{order.id}")
+      OrderMailer.confirmation_email(order).deliver_later
+      Rails.logger.info("📧 Mail de confirmation envoyé pour la commande ##{order.id}")
+    rescue => e
+      Rails.logger.error("💥 Erreur finale update/mail: #{e.message}")
+    end
   rescue => e
-    Rails.logger.error("💥 Crash handle_payment: #{e.message} - #{e.backtrace.first(5).join(' | ')}")
+    Rails.logger.error("💥 Crash global handle_payment: #{e.message} - #{e.backtrace.first(5).join(' | ')}")
   end
 
   def handle_transfer_paid(transfer)
