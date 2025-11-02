@@ -71,7 +71,7 @@ Rails.application.routes.draw do
 
   get '/artworks/:category/:sub_category', to: 'artworks#sub_category', as: 'artworks_category_sub_category'
 
-  post '/webhooks/stripe', to: 'webhooks#stripe'
+  post "/webhooks/stripe", to: "webhooks#stripe"
 
   resources :news_items, only: [:index, :show]
 end
