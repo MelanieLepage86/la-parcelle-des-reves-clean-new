@@ -5,6 +5,12 @@ class WebhooksController < ApplicationController
     payload = request.body.read
     sig_header = request.env['HTTP_STRIPE_SIGNATURE']
 
+
+    Rails.logger.info("🔍 ALL STRIPE HEADERS: #{request.headers.select { |k| k.downcase.include?('stripe') }.inspect}")
+    Rails.logger.info("🔍 sig_header env: #{request.env['HTTP_STRIPE_SIGNATURE'].inspect}")
+    Rails.logger.info("🔍 sig_header headers: #{request.headers['Stripe-Signature'].inspect}")
+    Rails.logger.info("🔍 Payload preview: #{payload[0..200]}...")
+
     begin
       event = Stripe::Webhook.construct_event(payload, sig_header, ENV['STRIPE_WEBHOOK_SECRET'])
     rescue JSON::ParserError => e
