@@ -16,6 +16,8 @@ class WebhooksController < ApplicationController
     end
 
     Rails.logger.info("📩 Webhook reçu : #{event['type']}")
+    Rails.logger.info("🔍 Headers Stripe: #{request.headers['Stripe-Signature']}")
+    Rails.logger.info("🔍 Secret utilisé: #{ENV['STRIPE_WEBHOOK_SECRET'][0..5]}...")
 
     case event['type']
     when 'payment_intent.succeeded'
