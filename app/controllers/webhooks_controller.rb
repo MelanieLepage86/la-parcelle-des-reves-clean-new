@@ -4,7 +4,7 @@ class WebhooksController < ApplicationController
 
   def stripe
     # Log complet des headers
-    Rails.logger.info "🔍 Headers reçus : #{request.headers.env.select { |k,v| k.start_with?('HTTP_') || k == 'CONTENT_TYPE' }}"
+    Rails.logger.info "🔍 Headers reçus : #{request.headers.env.select { |k,_v| k.start_with?('HTTP_') || k == 'CONTENT_TYPE' }}"
 
     sig_header = request.headers['Stripe-Signature']
     Rails.logger.info "🔍 Stripe-Signature header: #{sig_header.inspect}"
@@ -101,7 +101,7 @@ class WebhooksController < ApplicationController
 
       if shipping_amount > 0 && artist&.stripe_account_id.present?
         begin
-          transfer = Stripe::Transfer.create(
+          _transfer = Stripe::Transfer.create(
             amount: shipping_amount,
             currency: 'eur',
             destination: artist.stripe_account_id,
