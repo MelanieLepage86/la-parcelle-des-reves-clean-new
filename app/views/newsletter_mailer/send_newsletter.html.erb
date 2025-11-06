@@ -57,7 +57,7 @@
     <% if @newsletter.images.attached? %>
       <div class="header-images">
         <% @newsletter.images.each do |image| %>
-          <%= image_tag url_for(image), alt: "Newsletter image", style: "max-width:100%; height:auto; margin-bottom:15px; border-radius:8px;" %>
+          <%= image_tag public_image_url(image), alt: "Newsletter image", style: "max-width:100%; height:auto; margin-bottom:15px; border-radius:8px;" %>
         <% end %>
       </div>
     <% end %>

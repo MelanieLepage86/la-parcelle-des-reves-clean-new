@@ -1,6 +1,8 @@
 require "active_support/core_ext/integer/time"
 
 Rails.application.configure do
+  Rails.application.routes.default_url_options[:host] = 'la-parcelle-des-reves-751d0d99b0d9.herokuapp.com'
+  Rails.application.routes.default_url_options[:protocol] = 'https'
   config.action_mailer.default_url_options = { host: 'la-parcelle-des-reves-751d0d99b0d9.herokuapp.com', protocol: 'https'}
   config.action_mailer.delivery_method = :smtp
   config.action_mailer.perform_deliveries = true
