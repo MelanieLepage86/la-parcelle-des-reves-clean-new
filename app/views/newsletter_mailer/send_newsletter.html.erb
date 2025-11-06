@@ -54,7 +54,7 @@
 <body>
   <div class="container">
 
-    <% if @newsletter.images.attached? %>
+    <% if @newsletter.images.any? %>
       <div class="header-images">
         <% @newsletter.images.each do |image| %>
           <% if public_image_url(image) %>
