@@ -56,8 +56,12 @@
 
     <% if @newsletter.images.any? %>
       <div class="header-images">
-        <% @newsletter.images.each do |image| %>
-          <%= image_tag public_image_url(image), alt: "Newsletter image", style: "max-width:100%; height:auto; margin-bottom:15px; border-radius:8px;" %>
+        <% @newsletter.images.each do |attachment| %>
+          <% if public_image_url(attachment) %>
+            <%= image_tag public_image_url(attachment),
+                          alt: "Newsletter image",
+                          style: "max-width:100%; height:auto; margin-bottom:15px; border-radius:8px;" %>
+          <% end %>
         <% end %>
       </div>
     <% end %>

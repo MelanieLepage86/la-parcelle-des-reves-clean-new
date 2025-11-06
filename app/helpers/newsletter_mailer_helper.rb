@@ -1,11 +1,13 @@
 module NewsletterMailerHelper
-  def public_image_url(image)
-    return unless image.attached?
+  include Rails.application.routes.url_helpers
 
-    if Rails.env.production?
-      image.service_url
+  def public_image_url(attachment)
+    return nil unless attachment.present? && attachment.blob.present?
+
+    if Rails.application.config.active_storage.service == :cloudinary
+      attachment.service_url
     else
-      Rails.application.routes.url_helpers.url_for(image)
+      rails_blob_url(attachment, host: Rails.application.routes.default_url_options[:host], protocol: Rails.application.routes.default_url_options[:protocol])
     end
   end
 end
