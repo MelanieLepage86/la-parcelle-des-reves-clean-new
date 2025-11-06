@@ -69,7 +69,7 @@
       <% if @subscriber&.persisted? %>
         <p>
           Si vous ne souhaitez plus recevoir nos emails,
-          <a href="<%= unsubscribe_url(@subscriber) %>" class="unsubscribe">cliquez ici pour vous désabonner</a>.
+          <a href="<%= unsubscribe_subscriber_url(@subscriber) %>" class="unsubscribe">cliquez ici pour vous désabonner</a>
         </p>
       <% else %>
         <p style="color: gray; font-style: italic;">
