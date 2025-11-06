@@ -57,7 +57,7 @@ class NewslettersController < ApplicationController
     subscribers = Subscriber.active
 
     subscribers.each do |subscriber|
-      NewsletterMailer.send_newsletter(subscriber, @newsletter).deliver_later
+      NewsletterMailer.send_newsletter(subscriber, @newsletter).deliver_now
     end
 
     flash[:notice] = "Newsletter envoyée !"

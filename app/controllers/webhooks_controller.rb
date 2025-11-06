@@ -123,7 +123,7 @@ class WebhooksController < ApplicationController
     # --- 🔸 Finalisation commande ---
     order.update!(status: 'payment_confirmed')
     Rails.logger.info("✅ Commande ##{order.id} marquée comme payée")
-    OrderMailer.confirmation_email(order).deliver_later
+    OrderMailer.confirmation_email(order).deliver_now
     Rails.logger.info("📧 Mail de confirmation envoyé pour commande ##{order.id}")
   rescue => e
     Rails.logger.error("💥 Erreur handle_successful_payment: #{e.message}")
