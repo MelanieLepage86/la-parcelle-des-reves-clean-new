@@ -1,0 +1,104 @@
+<!DOCTYPE html>
+<html>
+  <head>
+    <meta charset="UTF-8">
+    <style>
+      body {
+        font-family: Arial, Helvetica, sans-serif;
+        color: #333;
+        background-color: #f8f9fa;
+        padding: 20px;
+      }
+      .container {
+        background-color: #fff;
+        border-radius: 8px;
+        padding: 20px;
+        max-width: 600px;
+        margin: auto;
+        box-shadow: 0 0 8px rgba(0,0,0,0.1);
+      }
+      h1 {
+        color: #2c3e50;
+      }
+      ul {
+        padding-left: 20px;
+      }
+      hr {
+        border: none;
+        border-top: 1px solid #ddd;
+        margin: 20px 0;
+      }
+      .footer {
+        margin-top: 20px;
+        font-size: 12px;
+        color: #777;
+        text-align: center;
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <h1>🎨 Nouvelle commande reçue</h1>
+
+      <p>Une nouvelle commande vient d’être passée sur <strong>La Parcelle des Rêves</strong>.</p>
+
+      <h3>Détails de la commande</h3>
+      <p><strong>Numéro de commande :</strong> <%= @order.id %></p>
+
+      <hr>
+
+      <h3>Informations client</h3>
+      <p>
+        <strong>Nom :</strong>
+        <%= [@order.first_name, @order.last_name].compact_blank.join(" ") %>
+        <% if [@order.first_name, @order.last_name].compact_blank.empty? %>Non renseigné<% end %><br>
+
+        <strong>Email :</strong> <%= @order.email.presence || "Non renseigné" %><br>
+        <strong>Téléphone :</strong> <%= @order.phone.presence || "Non renseigné" %><br>
+
+        <strong>Adresse :</strong>
+        <% if @order.address_line.present? || @order.postal_code.present? || @order.city.present? || @order.country.present? %>
+          <%= [@order.address_line, @order.postal_code, @order.city, @order.country].compact_blank.join(", ") %>
+        <% else %>
+          Non renseignée
+        <% end %>
+        <br>
+
+        <strong>Mode de réception :</strong>
+        <%= (@order.delivery_method_label rescue @order.delivery_method).presence || "Non renseigné" %><br>
+
+        <strong>Pays :</strong> <%= @order.country.presence || "Non renseigné" %><br>
+      </p>
+
+      <hr>
+
+      <h3>Œuvres commandées</h3>
+      <% if @order.order_items.any? %>
+        <ul>
+          <% @order.order_items.includes(:artwork).each do |item| %>
+            <li>
+              <strong><%= item.artwork.title %></strong> –
+              <%= number_to_currency(item.unit_price, unit: "€") %>
+            </li>
+          <% end %>
+        </ul>
+      <% else %>
+        <p>Aucune œuvre associée (vérifier la commande).</p>
+      <% end %>
+
+      <% if @order.shipping_cost.present? && @order.shipping_cost > 0 %>
+        <p><strong>Frais de port :</strong> <%= number_to_currency(@order.shipping_cost, unit: "€") %></p>
+      <% end %>
+
+      <p><strong>Total :</strong> <%= number_to_currency(@order.total_amount, unit: "€") %></p>
+
+      <hr>
+
+      <p>Cette commande a été confirmée et le paiement a été reçu.</p>
+
+      <div class="footer">
+        <p>— La Parcelle des Rêves</p>
+      </div>
+    </div>
+  </body>
+</html>

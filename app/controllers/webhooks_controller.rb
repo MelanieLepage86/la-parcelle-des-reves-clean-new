@@ -125,6 +125,8 @@ class WebhooksController < ApplicationController
     Rails.logger.info("✅ Commande ##{order.id} marquée comme payée")
     OrderMailer.confirmation_email(order).deliver_now
     Rails.logger.info("📧 Mail de confirmation envoyé pour commande ##{order.id}")
+    OrderMailer.notify_artist(order).deliver_now
+    Rails.logger.info("🎨 Mail envoyé à laparcelledesreves.art@gmail.com")
   rescue => e
     Rails.logger.error("💥 Erreur handle_successful_payment: #{e.message}")
   end
