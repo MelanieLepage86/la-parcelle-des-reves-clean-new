@@ -6,32 +6,55 @@
   </div>
 
   <div class="row row-cols-1 row-cols-md-2 row-cols-lg-4 g-4 justify-content-center">
+
     <div class="col text-center">
-      <h5>Nature</h6>
+      <h5>Nature</h5>
       <%= link_to artworks_category_sub_category_path('portfolio', 'Nature'), class: "text-decoration-none text-dark" do %>
-        <%= image_tag("Portfolio-Nature.jpg", class: "img-fluid rounded-4 shadow-sm link-tile", style: "width: 100%; height: 550px; object-fit: cover;") %>
+        <% page_image = PageImage.find_by(name: "Portfolio-Nature") %>
+        <%= image_tag(
+              page_image&.image&.attached? ? url_for(page_image.image) : asset_path("Portfolio-Nature.jpg"),
+              class: "img-fluid rounded-4 shadow-sm link-tile",
+              style: "width: 100%; height: 550px; object-fit: cover;"
+            ) %>
       <% end %>
     </div>
 
     <div class="col text-center">
-      <h5>Portrait</h6>
+      <h5>Portrait</h5>
       <%= link_to artworks_category_sub_category_path(category: 'portfolio', sub_category: 'portrait'), class: "text-decoration-none text-dark" do %>
-        <%= image_tag("Portfolio-Portrait.jpg", class: "img-fluid rounded-4 shadow-sm link-tile", style: "width: 100%; height: 550px; object-fit: cover;") %>
+        <% page_image = PageImage.find_by(name: "Portfolio-Portrait") %>
+        <%= image_tag(
+              page_image&.image&.attached? ? url_for(page_image.image) : asset_path("Portfolio-Portrait.jpg"),
+              class: "img-fluid rounded-4 shadow-sm link-tile",
+              style: "width: 100%; height: 550px; object-fit: cover;"
+            ) %>
       <% end %>
     </div>
 
     <div class="col text-center">
-      <h5>Reportage</h6>
+      <h5>Reportage</h5>
       <%= link_to artworks_category_sub_category_path('portfolio', 'Reportage'), class: "text-decoration-none text-dark" do %>
-        <%= image_tag("Portfolio-Reportage.jpg", class: "img-fluid rounded-4 shadow-sm link-tile", style: "width: 100%; height: 550px; object-fit: cover;") %>
+        <% page_image = PageImage.find_by(name: "Portfolio-Reportage") %>
+        <%= image_tag(
+              page_image&.image&.attached? ? url_for(page_image.image) : asset_path("Portfolio-Reportage.jpg"),
+              class: "img-fluid rounded-4 shadow-sm link-tile",
+              style: "width: 100%; height: 550px; object-fit: cover;"
+            ) %>
       <% end %>
     </div>
 
     <div class="col text-center">
-      <h5>Photomanipulation onirique</h6>
+      <h5>Photomanipulation onirique</h5>
       <%= link_to artworks_category_sub_category_path('portfolio', 'Photomanipulation Onirique'), class: "text-decoration-none text-dark" do %>
-        <%= image_tag("Portfolio-Photomanip.jpg", class: "img-fluid rounded-4 shadow-sm link-tile", style: "width: 100%; height: 550px; object-fit: cover;") %>
+        <% page_image = PageImage.find_by(name: "Portfolio-Photomanip") %>
+        <%= image_tag(
+              page_image&.image&.attached? ? url_for(page_image.image) : asset_path("Portfolio-Photomanip.jpg"),
+              class: "img-fluid rounded-4 shadow-sm link-tile",
+              style: "width: 100%; height: 550px; object-fit: cover;"
+            ) %>
       <% end %>
     </div>
+
   </div>
 </div>
+
