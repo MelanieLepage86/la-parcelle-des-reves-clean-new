@@ -6,7 +6,10 @@ class Artwork < ApplicationRecord
   has_many_attached :images
 
   scope :published, -> { where(published: true) }
-  scope :by_sub_category, ->(sub) { where(sub_category: sub) }
+
+  scope :by_sub_category, ->(sub) {
+    where("LOWER(sub_category) = ? OR LOWER(sub_category) = ?", sub.downcase, "#{sub.downcase} reproductible")
+  }
 
   enum shipping_category: {
     categorie_1: "categorie_1",
@@ -15,7 +18,12 @@ class Artwork < ApplicationRecord
     categorie_4: "categorie_4"
   }
 
+  def reproducible?
+    sub_category&.downcase&.include?("reproductible")
+  end
+
   def sold_and_paid?
+    return false if reproducible?
     orders.where.not(status: ['pending', 'remboursee']).exists?
   end
 end

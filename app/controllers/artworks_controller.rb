@@ -28,7 +28,10 @@ class ArtworksController < ApplicationController
     @category = params[:category]
     @sub_category = params[:sub_category]
 
-    all_artworks = Artwork.where("LOWER(category) = ? AND LOWER(sub_category) = ? AND published = ?", @category.downcase, @sub_category.downcase, true)
+    all_artworks = Artwork
+    .published
+    .where("LOWER(category) = ?", @category.downcase)
+    .by_sub_category(@sub_category)
 
     if @category == 'boutique'
       @highlighted_artworks = all_artworks.where("title ILIKE ?", "Atelier%")

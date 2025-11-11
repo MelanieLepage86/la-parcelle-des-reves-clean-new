@@ -14,7 +14,14 @@ export default class extends Controller {
 
     const subCategoryOptions = {
       Portfolio: ["Nature", "Portrait", "Photomanipulation Onirique", "Reportage"],
-      Boutique: ["Cyanotypie", "Peinture", "Curiosités"],
+      Boutique: [
+        "Cyanotypie",
+        "Peinture",
+        "Curiosités",
+        "Cyanotypie reproductible",
+        "Peinture reproductible",
+        "Curiosités reproductible"
+      ],
       Prestation: ["Cyanotypie", "Peinture", "Photographie"]
     };
 

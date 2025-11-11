@@ -29,7 +29,7 @@ class CartsController < ApplicationController
     artworks = Artwork.where(id: session[:cart])
     artworks_total = artworks.sum(&:price)
 
-    if artworks.any?(&:sold)
+    if artworks.any? { |a| a.sold && !a.reproducible? }
       redirect_to cart_path, alert: "Certaines œuvres dans votre panier ont déjà été vendues."
       return
     end
@@ -46,7 +46,7 @@ class CartsController < ApplicationController
           quantity: 1,
           unit_price: art.price
         )
-        art.update!(sold: true)
+        art.update!(sold: true) unless art.reproducible?
       end
 
       shipping_cost = ShippingCalculator.new(@order).calculate

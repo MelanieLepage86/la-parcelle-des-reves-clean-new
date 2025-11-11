@@ -18,7 +18,7 @@ class OrdersController < ApplicationController
         unit_price: @artwork.price
       )
 
-      @artwork.update!(sold: true)
+      @artwork.update!(sold: true) unless @artwork.reproducible?
 
       shipping_cost = ShippingCalculator.new(@order).calculate
       @order.update!(shipping_cost: shipping_cost)
@@ -40,7 +40,7 @@ class OrdersController < ApplicationController
 
     if @order.status == "pending"
       @order.order_items.each do |item|
-        item.artwork.update!(sold: false)
+        item.artwork.update!(sold: false) unless item.artwork.reproducible?
       end
 
       @order.destroy

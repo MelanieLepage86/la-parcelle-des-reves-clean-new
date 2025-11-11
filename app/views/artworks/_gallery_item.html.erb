@@ -5,7 +5,7 @@
       <% secondary_image = artwork.images.second if artwork.images.size > 1 %>
 
       <div class="image-hover-wrapper position-relative <%= 'has-hover' if secondary_image %>">
-        <% if artwork.sold_and_paid? %>
+        <% if artwork.sold_and_paid? && !artwork.reproducible? %>
           <div class="sold-ribbon">VENDU</div>
         <% end %>
 
@@ -18,7 +18,10 @@
 
     <div class="card-body text-center p-2">
       <h5 class="card-title mb-1"><%= artwork.title %></h5>
-      <p class="card-text fw-bold mb-2"><%= number_to_currency(artwork.price, unit: "€", separator: ",", delimiter: " ") %></p>
+      <p class="card-text fw-bold mb-2">
+        <%= number_to_currency(artwork.price, unit: "€", separator: ",", delimiter: " ") %>
+      </p>
     </div>
   <% end %>
 </div>
+
