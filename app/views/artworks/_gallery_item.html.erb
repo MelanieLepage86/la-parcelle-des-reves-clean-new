@@ -5,7 +5,7 @@
       <% secondary_image = artwork.images.second if artwork.images.size > 1 %>
 
       <div class="image-hover-wrapper position-relative <%= 'has-hover' if secondary_image %>">
-        <% if artwork.sold_and_paid? && !artwork.reproducible? %>
+        <% if !artwork.reproducible? && artwork.sold_and_paid? %>
           <div class="sold-ribbon">VENDU</div>
         <% end %>
 
@@ -24,4 +24,3 @@
     </div>
   <% end %>
 </div>
-

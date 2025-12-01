@@ -2,7 +2,15 @@ class CartsController < ApplicationController
   def add
     session[:cart] ||= []
     artwork_id = params[:artwork_id].to_i
-    session[:cart] << artwork_id unless session[:cart].include?(artwork_id)
+    quantity = params[:quantity].to_i || 1  # Récupère la quantité, par défaut 1
+
+    # Ajoute l'œuvre au panier en fonction de la quantité
+    if quantity > 0
+      quantity.times do
+        session[:cart] << artwork_id unless session[:cart].include?(artwork_id)
+      end
+    end
+
     redirect_to cart_path, notice: "Ajouté au panier"
   end
 
@@ -29,6 +37,7 @@ class CartsController < ApplicationController
     artworks = Artwork.where(id: session[:cart])
     artworks_total = artworks.sum(&:price)
 
+    # Vérifie si certaines œuvres sont vendues et non reproductibles
     if artworks.any? { |a| a.sold && !a.reproducible? }
       redirect_to cart_path, alert: "Certaines œuvres dans votre panier ont déjà été vendues."
       return
@@ -40,13 +49,15 @@ class CartsController < ApplicationController
     ActiveRecord::Base.transaction do
       @order.save!
 
+      # Crée les éléments de commande et calcule la quantité
       artworks.each do |art|
+        quantity_in_cart = session[:cart].count(art.id)  # Récupère la quantité d'une œuvre dans le panier
         @order.order_items.create!(
           artwork: art,
-          quantity: 1,
+          quantity: quantity_in_cart,  # Utilise la quantité dans le panier
           unit_price: art.price
         )
-        art.update!(sold: true) unless art.reproducible?
+        art.update!(sold: true) unless art.reproducible?  # Si non reproductible, on marque l'œuvre comme vendue
       end
 
       shipping_cost = ShippingCalculator.new(@order).calculate
@@ -56,7 +67,7 @@ class CartsController < ApplicationController
       )
     end
 
-    session[:cart] = []
+    session[:cart] = []  # Vide le panier après la création de la commande
     redirect_to checkout_payment_cart_path(id: @order.id)
   rescue ActiveRecord::RecordInvalid => e
     Rails.logger.error "=== ERREURS VALIDATION ORDER ==="

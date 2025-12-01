@@ -42,7 +42,18 @@
           </p>
           <%= link_to "Contactez-nous", new_contact_path, class: "btn btn-custom" %>
         <% else %>
-          <%= button_to 'Ajouter au panier', add_to_cart_path(artwork_id: @artwork.id), method: :post, class: "btn btn-custom px-4 py-2" %>
+          <% if @artwork.reproducible? %>
+            <%= form_with url: add_to_cart_path, method: :post, local: true do |f| %>
+              <%= hidden_field_tag :artwork_id, @artwork.id %>
+              <div class="form-group">
+                <%= label_tag :quantity, "Quantité" %>
+                <%= number_field_tag :quantity, 1, min: 1, max: 10, step: 1, class: "form-control" %>
+              </div>
+              <%= submit_tag 'Ajouter au panier', class: "btn btn-custom px-4 py-2" %>
+            <% end %>
+          <% else %>
+            <%= button_to 'Ajouter au panier', add_to_cart_path(artwork_id: @artwork.id), method: :post, class: "btn btn-custom px-4 py-2" %>
+          <% end %>
         <% end %>
       </div>
     </div>

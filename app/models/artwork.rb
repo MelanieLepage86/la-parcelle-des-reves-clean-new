@@ -24,6 +24,6 @@ class Artwork < ApplicationRecord
 
   def sold_and_paid?
     return false if reproducible?
-    orders.where.not(status: ['pending', 'remboursee']).exists?
+    orders.where.not(status: ['pending', 'remboursee']).exists? || sold
   end
 end
