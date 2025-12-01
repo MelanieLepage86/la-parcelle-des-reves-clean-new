@@ -7,7 +7,7 @@ class CartsController < ApplicationController
     # Ajoute l'œuvre au panier en fonction de la quantité
     if quantity > 0
       quantity.times do
-        session[:cart] << artwork_id unless session[:cart].include?(artwork_id)
+        session[:cart] << artwork_id
       end
     end
 
@@ -17,6 +17,13 @@ class CartsController < ApplicationController
   def show
     @artworks = Artwork.where(id: session[:cart]).with_attached_images
     @cart_count = session[:cart]&.size || 0
+
+    # Calcul du total du panier en tenant compte des quantités
+    @cart_total = 0
+    @artworks.each do |art|
+      quantity_in_cart = session[:cart].count(art.id)
+      @cart_total += art.price * quantity_in_cart
+    end
   end
 
   def checkout_info
@@ -35,7 +42,7 @@ class CartsController < ApplicationController
     end
 
     artworks = Artwork.where(id: session[:cart])
-    artworks_total = artworks.sum(&:price)
+    artworks_total = artworks.sum { |art| art.price * session[:cart].count(art.id) }
 
     # Vérifie si certaines œuvres sont vendues et non reproductibles
     if artworks.any? { |a| a.sold && !a.reproducible? }
@@ -49,9 +56,8 @@ class CartsController < ApplicationController
     ActiveRecord::Base.transaction do
       @order.save!
 
-      # Crée les éléments de commande et calcule la quantité
       artworks.each do |art|
-        quantity_in_cart = session[:cart].count(art.id)  # Récupère la quantité d'une œuvre dans le panier
+        quantity_in_cart = session[:cart].count(art.id)
         @order.order_items.create!(
           artwork: art,
           quantity: quantity_in_cart,  # Utilise la quantité dans le panier

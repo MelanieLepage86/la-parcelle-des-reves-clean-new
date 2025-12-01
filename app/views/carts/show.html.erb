@@ -58,7 +58,7 @@
           </ul>
 
           <p style="font-size: 1.2rem;"><strong>Total :</strong>
-            <%= number_to_currency(@artworks.sum(&:price), unit: "€", separator: ",", delimiter: " ")%>
+            <%= number_to_currency(@cart_total, unit: "€", separator: ",", delimiter: " ") %>
           </p>
 
           <div class="d-flex gap-2 mt-3 flex-wrap">
