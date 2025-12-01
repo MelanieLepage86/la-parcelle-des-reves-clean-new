@@ -45,12 +45,17 @@
           <% if @artwork.reproducible? %>
             <%= form_with url: add_to_cart_path, method: :post, local: true do |f| %>
               <%= hidden_field_tag :artwork_id, @artwork.id %>
-              <div class="form-group">
-                <%= label_tag :quantity, "Quantité" %>
-                <%= number_field_tag :quantity, 1, min: 1, max: 10, step: 1, class: "form-control" %>
+
+              <div class="form-group d-flex align-items-center">
+                <%= label_tag :quantity, "Quantité", class: "me-2" %> <!-- Ajout de la classe me-2 pour espacer le label -->
+                <%= number_field_tag :quantity, 1, min: 1, max: 10, step: 1, class: "form-control form-control-sm" %> <!-- Classe form-control-sm pour réduire la taille du sélecteur -->
               </div>
-              <%= submit_tag 'Ajouter au panier', class: "btn btn-custom px-4 py-2" %>
+
+              <div class="text-center">
+                <%= submit_tag 'Ajouter au panier', class: "btn btn-custom px-4 py-2 mt-3" %> <!-- Ajout de la marge en haut pour espacer le bouton -->
+              </div>
             <% end %>
+          <% end %>
           <% else %>
             <%= button_to 'Ajouter au panier', add_to_cart_path(artwork_id: @artwork.id), method: :post, class: "btn btn-custom px-4 py-2" %>
           <% end %>
