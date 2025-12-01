@@ -55,7 +55,6 @@
                 <%= submit_tag 'Ajouter au panier', class: "btn btn-custom px-4 py-2 mt-3" %> <!-- Ajout de la marge en haut pour espacer le bouton -->
               </div>
             <% end %>
-          <% end %>
           <% else %>
             <%= button_to 'Ajouter au panier', add_to_cart_path(artwork_id: @artwork.id), method: :post, class: "btn btn-custom px-4 py-2" %>
           <% end %>
