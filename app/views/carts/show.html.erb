@@ -44,7 +44,10 @@
                 <div style="font-size: 1.2rem;">
                   <strong><%= art.title %></strong> -
                   <%= number_to_currency(art.price, unit: "€", separator: ",", delimiter: " ") %><br>
-                  Quantité : <%= session[:cart].count(art.id) %>
+                  Quantité : <%= session[:cart].count(art.id) %><br>
+                  <strong>Prix total :</strong>
+                  <%= number_to_currency(art.price * session[:cart].count(art.id), unit: "€", separator: ",", delimiter: " ") %><br>
+
                   <%= button_to remove_from_cart_path(artwork_id: art.id),
                       method: :post,
                       form: { class: 'd-inline' },
