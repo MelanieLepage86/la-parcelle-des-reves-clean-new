@@ -56,7 +56,11 @@
               </div>
             <% end %>
           <% else %>
-            <%= button_to 'Ajouter au panier', add_to_cart_path(artwork_id: @artwork.id), method: :post, class: "btn btn-custom px-4 py-2" %>
+            <%= button_to 'Ajouter au panier',
+              add_to_cart_path(artwork_id: @artwork.id),
+              method: :post,
+              class: "btn btn-custom px-4 py-2",
+              data: { turbo: false } %>
           <% end %>
         <% end %>
       </div>
