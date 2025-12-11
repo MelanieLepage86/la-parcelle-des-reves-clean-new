@@ -2,13 +2,19 @@ class CartsController < ApplicationController
   def add
     session[:cart] ||= []
     artwork_id = params[:artwork_id].to_i
-    quantity = params[:quantity].to_i || 1  # Récupère la quantité, par défaut 1
 
-    # Ajoute l'œuvre au panier en fonction de la quantité
-    if quantity > 0
-      quantity.times do
-        session[:cart] << artwork_id
-      end
+    artwork = Artwork.find(artwork_id)
+
+    quantity = if artwork.reproducible?
+                 params[:quantity].to_i
+               else
+                 1
+               end
+
+    quantity = 1 if quantity < 1
+
+    quantity.times do
+      session[:cart] << artwork_id
     end
 
     redirect_to cart_path, notice: "Ajouté au panier"
