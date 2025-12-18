@@ -122,6 +122,9 @@ class WebhooksController < ApplicationController
 
     # --- 🔸 Finalisation commande ---
     order.update!(status: 'payment_confirmed')
+    order.order_items.each do |item|
+      item.artwork.update!(sold: true) unless item.artwork.reproducible?
+    end
     Rails.logger.info("✅ Commande ##{order.id} marquée comme payée")
     OrderMailer.confirmation_email(order).deliver_now
     Rails.logger.info("📧 Mail de confirmation envoyé pour commande ##{order.id}")

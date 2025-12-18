@@ -69,7 +69,6 @@ class CartsController < ApplicationController
           quantity: quantity_in_cart,  # Utilise la quantité dans le panier
           unit_price: art.price
         )
-        art.update!(sold: true) unless art.reproducible?  # Si non reproductible, on marque l'œuvre comme vendue
       end
 
       shipping_cost = ShippingCalculator.new(@order).calculate

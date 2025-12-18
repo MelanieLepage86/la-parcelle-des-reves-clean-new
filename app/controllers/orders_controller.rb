@@ -18,8 +18,6 @@ class OrdersController < ApplicationController
         unit_price: @artwork.price
       )
 
-      @artwork.update!(sold: true) unless @artwork.reproducible?
-
       shipping_cost = ShippingCalculator.new(@order).calculate
       @order.update!(shipping_cost: shipping_cost)
     end
